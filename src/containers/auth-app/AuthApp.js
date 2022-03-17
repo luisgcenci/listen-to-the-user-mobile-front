@@ -6,11 +6,13 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import ValidateRegisterScreen from './screens/ValidateRegisterScreen';
-import ValidateLoginScreen from './screens/ValidateLoginScreen';
-import VerifyScreen from './screens/VerifyScreen';
-import RegisterInfoScreen from './screens/RegisterInfoScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
+import ValidatePhoneScreen from './screens/ValidatePhoneScreen';
+import VerifyPhoneScreen from './screens/VerifyPhoneScreen';
+import RegisterNameScreen from './screens/RegisterNameScreen';
+import RegisterBirthdayScreen from './screens/RegisterBirthdayScreen';
+import RegisterEmailScreen from './screens/RegisterEmailScreen';
+import RegisterPasswordScreen from './screens/RegisterPasswordScreen'
 
 const styles = StyleSheet.create({
 
@@ -38,20 +40,28 @@ const AuthApp = () => (
           component={WelcomeScreen}
         />
         <Stack.Screen
-          name="RegisterInfoScreen"
-          component={RegisterInfoScreen}
+          name="RegisterNameScreen"
+          component={RegisterNameScreen}
         />
         <Stack.Screen
-          name="ValidateRegisterScreen"
-          component={ValidateRegisterScreen}
+          name="RegisterBirthdayScreen"
+          component={RegisterBirthdayScreen}
         />
         <Stack.Screen
-          name="ValidateLoginScreen"
-          component={ValidateLoginScreen}
+          name="RegisterEmailScreen"
+          component={RegisterEmailScreen}
         />
         <Stack.Screen
-          name="VerifyScreen"
-          component={VerifyScreen}
+          name="RegisterPasswordScreen"
+          component={RegisterPasswordScreen}
+        />
+        <Stack.Screen
+          name="ValidatePhoneScreen"
+          component={ValidatePhoneScreen}
+        />
+        <Stack.Screen
+          name="VerifyPhoneScreen"
+          component={VerifyPhoneScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

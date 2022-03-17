@@ -16,20 +16,31 @@ const initialState: accRegistrationState = {
   number: '',
 };
 
-const phoneAuthSlice = createSlice({
+const accRegistrationSlice = createSlice({
   name: 'accRegistration',
   initialState,
   reducers: {
-
-    registerAccount(state, action: PayloadAction<Array<String>>) {
+    updateName(state, action: PayloadAction<String>) {
       const st = state;
       const payload = action.payload;
-      st.name = payload['name'];
-      st.bday = payload['bday'];
-      st.email = payload['email'];
-      st.password = payload['password'];
+      st.name = payload;
     },
-    registerNumber(state, action: PayloadAction<String>) {
+    updateBday(state, action: PayloadAction<String>) {
+      const st = state;
+      const payload = action.payload;
+      st.bday = payload;
+    },
+    updateEmail(state, action: PayloadAction<String>) {
+      const st = state;
+      const payload = action.payload;
+      st.email = payload;
+    },
+    updatePassword(state, action: PayloadAction<String>) {
+      const st = state;
+      const payload = action.payload;
+      st.password = payload;
+    },
+    updateNumber(state, action: PayloadAction<String>) {
       const st = state;
       const payload = action.payload;
       st.number = payload;
@@ -38,8 +49,11 @@ const phoneAuthSlice = createSlice({
 });
 
 export const {
-  registerAccount,
-  registerNumber
-} = phoneAuthSlice.actions;
+  updateName,
+  updateBday,
+  updateEmail,
+  updatePassword,
+  updateNumber,
+} = accRegistrationSlice.actions;
 
-export default phoneAuthSlice.reducer;
+export default accRegistrationSlice.reducer;

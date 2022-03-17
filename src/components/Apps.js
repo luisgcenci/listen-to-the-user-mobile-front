@@ -10,7 +10,7 @@ const Apps = () => {
 
   return (
     <>
-        {authStatus ? <InternalApp/> : <AuthApp/>}
+      {authStatus ? <InternalApp/> : <AuthApp/>}
     </>
   )
 };
