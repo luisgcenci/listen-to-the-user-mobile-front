@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import PhoneInput, { isValidNumber } from 'react-native-phone-number-input';
 import {
   Text,
   View,
@@ -9,10 +8,18 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
-import firebase from '../../firebase/config';
-import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts';
+
+//components imports
 import Errormessage from '../../../components/atoms/ErrorMessage';
+
+//phone auth imports
+import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
+import { getApp } from 'firebase/app';
+import { getAuth, PhoneAuthProvider } from 'firebase/auth';
+import PhoneInput, { isValidNumber } from 'react-native-phone-number-input';
+
+//redux imports
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts';
 import {
   updatePhoneNumber,
   updateVerificationId,
@@ -21,6 +28,7 @@ import {
 import {
   updateNumber
 } from '../../../store/features/accRegistrationSlice.ts'
+
 const axios = require('axios');
 
 const styles = StyleSheet.create({
@@ -40,25 +48,50 @@ const styles = StyleSheet.create({
   },
 });
 
+// Firebase references
+const app = getApp();
+const auth = getAuth();
+
+if (!app?.options || Platform.OS === 'web') {
+  throw new Error('This example only works on Android or iOS, and requires a valid Firebase config.');
+}
+
 const ValidatePhoneScreen = ({ navigation }) => {
+
+  //hooks variables
   const recaptchaVerifier = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
 
+  //redux variables
   const phoneNumber = useAppSelector((state) => state.phoneAuth.phoneNumber);
   const registeringAccount = useAppSelector((state) => state.authApp.registeringAccount);
 
   const dispatch = useAppDispatch();
 
-  const checkUserExists = () => {
+  //phone auth references
+  const firebaseConfig = app ? app.options : undefined;
+  const attemptInvisibleVerification = false;
 
+  const checkUserExists = () => {
     axios.post('http://127.0.0.1:5000/checkuserexists', {
       number: phoneNumber
     })
     .then( (response) => {
-      if (response.data){
+
+      const userExists = response.data ? true : false;
+
+      if ( (registeringAccount && !userExists) || (!registeringAccount && userExists) ){
         sendVerificationCode();
-      }else{
-        setErrorMessage('This number is not associated with an account.');
+      }
+      else if (registeringAccount && userExists){
+        setErrorMessage(
+          'This number is already associated with an account. Please log in.'
+        );
+      }
+      else if (!registeringAccount && !userExists){
+        setErrorMessage(
+          'This number is not associated with an account. Please create an account.'
+        );      
       }
     })
     .catch( (error) => {
@@ -66,9 +99,10 @@ const ValidatePhoneScreen = ({ navigation }) => {
     })
   }
 
+  
   const sendVerificationCode = () => {
     if (isValidNumber(phoneNumber)) {
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const phoneProvider = new PhoneAuthProvider(auth);
       phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current,
@@ -107,9 +141,8 @@ const ValidatePhoneScreen = ({ navigation }) => {
             marginVertical: 10,
           }}
         />
-        
         <Pressable
-          onPress={() => registeringAccount? sendVerificationCode() : checkUserExists()}
+          onPress={() => checkUserExists()}
           style={styles.button}
         >
           <Text style={styles.buttonText}> Validate! </Text>
@@ -125,8 +158,9 @@ const ValidatePhoneScreen = ({ navigation }) => {
         />
         <FirebaseRecaptchaVerifierModal
           ref={recaptchaVerifier}
-          firebaseConfig={firebase.app().options}
+          firebaseConfig={firebaseConfig}
         />
+        {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
       </View>
     </TouchableWithoutFeedback>
   );

@@ -50,7 +50,7 @@ const RegisterBirthdayScreen = ({ navigation }) => {
         confirmPassword: {equalPassword: password, required: true}
     })){
       dispatch(updatePassword(password))
-      navigation.navigate('ValidateScreen', {register: false});
+      navigation.navigate('ValidatePhoneScreen', {register: false});
     }
   }
 

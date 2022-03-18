@@ -6,7 +6,7 @@ import { useAppSelector } from '../hooks/hooks';
 
 const Apps = () => {
 
-  const authStatus = useAppSelector( (state) => state.phoneAuth.authStatus);
+  const authStatus = useAppSelector( (state) => state.authApp.authStatus);
 
   return (
     <>

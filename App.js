@@ -1,4 +1,4 @@
-
+import './src/containers/firebase/config';
 import { Provider } from 'react-redux';
 import Apps from './src/components/Apps';
 import { store } from './src/store/store.ts';

@@ -7,9 +7,14 @@ import {
   Pressable,
   TextInput,
 } from 'react-native';
-import firebase from '../../firebase/config';
+
+//phone auth imports
+import { getAuth, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+
+//redux imports
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts';
-import { updateAuthStatus, updateVerificationCode } from '../../../store/features/phoneAuthSlice.ts';
+import { updateVerificationCode } from '../../../store/features/phoneAuthSlice.ts';
+import { updateAuthStatus } from '../../../store/features/AuthAppSlice';
 import Errormessage from '../../../components/atoms/ErrorMessage';
 
 const axios = require('axios');
@@ -39,6 +44,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+// Firebase references
+const auth = getAuth();
 
 const VerifyScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState('');
@@ -70,15 +78,15 @@ const VerifyScreen = ({ navigation }) => {
 
   const confirmVerificationCode = () => {
 
-    const credential = firebase.auth.PhoneAuthProvider.credential(
+    const credential = PhoneAuthProvider.credential(
       verificationId,
-      verificationCode,
+      verificationCode
     );
 
-    firebase.auth().signInWithCredential(credential).then(() => {
+    signInWithCredential(auth, credential).then(() => {
       registeringAccount && saveAccRegistrationToDB();
       dispatch(updateAuthStatus(true));
-    }).catch((e) => { 
+    }).catch((e) => {
       switch (e.code) {
         case 'auth/invalid-verification-code':
           setErrorMessage('Invalid Code');
