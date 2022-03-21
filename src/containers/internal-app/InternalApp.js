@@ -7,6 +7,7 @@ import Icon from '../../components/atoms/Icon';
 
 // import * as serviceWorker from './src/serviceWorker';
 
+
 const Tab = createBottomTabNavigator();
 
 const returnIcon = (route, focused, color, size) => (

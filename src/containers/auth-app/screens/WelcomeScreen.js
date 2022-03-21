@@ -8,99 +8,12 @@ import {
 
 //redux imports
 import { 
-  updateRegisteringAccount, 
-  updateAuthStatus 
+  updateRegisteringAccount,
 } from '../../../store/features/AuthAppSlice';
-import { useAppDispatch } from '../../../hooks/hooks';
 
-//google auth imports
-import * as Google from 'expo-google-app-auth';
-import { getAuth } from 'firebase/auth';
-import { onAuthStateChanged, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
+import LogInWithGoogle from '../../../components/LogInWithGoogle';
 
 const WelcomeScreen = ({ navigation }) => {
-
-  const auth = getAuth();
-
-  const dispatch = useAppDispatch();
-
-  const signInWithGoogleAsync = async () => {
-    try {
-      const result = await Google.logInAsync({
-        // androidClientId: 'YOUR_CLIENT_ID_HERE',
-        behavior: 'web',
-        iosClientId: '286485084747-hmeo477ukevgadkqdcdo2196bduod8c5.apps.googleusercontent.com',
-        scopes: ['profile', 'email'],
-      });
-      
-      const provider = new GoogleAuthProvider();
-
-      
-      if (result.type === 'success') {
-        onSignIn(result);
-        return result.accessToken;
-      } else {
-        return { cancelled: true };
-      }
-    } catch (e) {
-      return { error: true };
-    }
-  }
-
-  const onSignIn = (googleUser) => {
-    console.log('Google Auth Response', googleUser);
-    // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-
-    try{
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        unsubscribe();
-        // Check if we are already signed-in Firebase with the correct user.
-        if (!isUserEqual(googleUser, firebaseUser)) {
-          // Build Firebase credential with the Google ID token.
-          const credential = GoogleAuthProvider.credential(
-            googleUser.idToken,
-            googleUser.accessToken
-          );
-    
-          // Sign in with credential from the Google user.
-          signInWithCredential(auth, credential)
-          .then(() => {
-            dispatch(updateAuthStatus(true));
-          }).catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The credential that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-  
-            console.log('error');
-          });
-        } else {
-          console.log('User already signed-in Firebase.');
-        }
-      });
-    }catch(e){
-      console.log(e);
-    }
-    
-  }
-
-  const isUserEqual = (googleUser, firebaseUser) => {
-    if (firebaseUser) {
-      const providerData = firebaseUser.providerData;
-      for (let i = 0; i < providerData.length; i++) {
-        if (providerData[i].providerId === GoogleAuthProvider.PROVIDER_ID &&
-            providerData[i].uid === googleUser.user.id) {
-          // We don't need to reauth the Firebase connection.
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -109,7 +22,7 @@ const WelcomeScreen = ({ navigation }) => {
         onPress={ () => dispatch(updateRegisteringAccount(true)) && navigation.navigate("RegisterNameScreen")}
         style={styles.button}
       >
-        <Text>Criar Contaa</Text>
+        <Text>Criar Conta</Text>
       </Pressable>
       <Pressable
         onPress={ () => dispatch(updateRegisteringAccount(false)) && navigation.navigate("ValidatePhoneScreen")}
@@ -117,12 +30,7 @@ const WelcomeScreen = ({ navigation }) => {
       >
         <Text>Log in with Phone Number</Text>
       </Pressable>
-      <Pressable
-        onPress={ () => dispatch(updateRegisteringAccount(false)) && signInWithGoogleAsync()}
-        style={styles.button}
-      >
-        <Text>Log in with Google</Text>
-      </Pressable>
+      <LogInWithGoogle />
     </SafeAreaView>
   );
 }
@@ -135,8 +43,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   button: {
-      backgroundColor: 'lightpink',
-      marginVertical: 10,
+    backgroundColor: 'lightpink',
+    marginVertical: 10,
   },
 });
 

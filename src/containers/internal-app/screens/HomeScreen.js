@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Pressable } from 'react-native';
+import { Text, Image, View, StyleSheet, Pressable } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useAppSelector } from '../../../hooks/hooks.ts';
 
 const styles = StyleSheet.create({
 
@@ -21,13 +22,26 @@ const styles = StyleSheet.create({
   barcode: {
     height: 250,
     width: 250
-  }
+  },
+  perfilPic: {
+    paddingTop: 50,
+    width:100,
+    height: 100
+  },
 });
 
 const HomeScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [barCodeOpen, setBarCodeOpen] = useState(false);
+
+  const userInfo = useAppSelector((state) => state.authApp.userInfo);
+  const name = userInfo.user.name;
+  const familyName = userInfo.user.familyName;
+  const givenName = userInfo.user.givenName;
+  const id = userInfo.user.id;
+  const email = userInfo.user.email;
+  const photoUrl  = userInfo.user.photoUrl;
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
@@ -53,8 +67,28 @@ const HomeScreen = () => {
     <Text style={styles.outputText}>
       Welcome to the Home Page!
     </Text>
-    {barCodeOpen ?
+    <Image style={styles.perfilPic}
+      source={{
+        uri: photoUrl
+      }}
+    />
+    <Text style={styles.outputText}>
+      Full Name: {name}
+    </Text>
+    <Text style={styles.outputText}>
+      Family Name: {familyName}
+    </Text>
+    <Text style={styles.outputText}>
+      Given Name: {givenName}
+    </Text>
+    <Text style={styles.outputText}>
+      Google ID: {id}
+    </Text>
+    <Text style={styles.outputText}>
+      Email: {email}
+    </Text>
 
+    {barCodeOpen ?
     <>
       <BarCodeScanner
       onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
