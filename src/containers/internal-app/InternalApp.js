@@ -1,48 +1,67 @@
 import React from 'react';
+import {
+  SafeAreaView,
+  StyleSheet
+} from 'react-native';
+
+//react navigation imports
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './screens/HomeScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import Icon from '../../components/atoms/Icon';
+import { createStackNavigator } from '@react-navigation/stack';
+import * as Linking from 'expo-linking'
+
+//screen imports
+import HomeTabs from './HomeTabs';
+import FeedbackTabs from './FeedbackTabs';
 
 // import * as serviceWorker from './src/serviceWorker';
 
+const Stack = createStackNavigator();
 
-const Tab = createBottomTabNavigator();
+const styles = StyleSheet.create({
 
-const returnIcon = (route, focused, color, size) => (
-  <Icon
-    route={route}
-    focused={focused}
-    color={color}
-    size={size}
-  />
-);
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
+  },
+});
 
-const InternalApp = () => (
-  <NavigationContainer>
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerStyle: {
-          backgroundColor: 'lightblue',
-        },
-        headerTitleAlign: 'center',
-        tabBarIcon: ({ focused, color, size }) => (
-          returnIcon(route, focused, color, size)
-        ),
-      })}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-      />
-    </Tab.Navigator>
-  </NavigationContainer>
-);
+const InternalApp = () => {
+
+  const prefix = Linking.createURL('/');
+
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        HomeTabs: "home",
+        FeedbackTabs: "feedback",
+      }
+    }
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <NavigationContainer linking={linking}>
+        <Stack.Navigator
+          initialRouteName="HomeTabs"
+          screenOptions={{
+            headerTitleAlign: 'center',
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen
+            name="HomeTabs"
+            component={HomeTabs}
+          />
+          <Stack.Screen
+            name="FeedbackTabs"
+            component={FeedbackTabs}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
+  );    
+};
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

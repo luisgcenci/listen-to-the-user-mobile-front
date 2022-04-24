@@ -14,8 +14,10 @@ import { getAuth, PhoneAuthProvider, signInWithCredential } from 'firebase/auth'
 //redux imports
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks.ts';
 import { updateVerificationCode } from '../../../store/features/phoneAuthSlice.ts';
-import { updateAuthStatus } from '../../../store/features/AuthAppSlice';
 import Errormessage from '../../../components/atoms/ErrorMessage';
+
+//helpers import
+import { saveClientUserToDB } from '../../../helpers';
 
 const axios = require('axios');
 
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
 // Firebase references
 const auth = getAuth();
 
-const VerifyScreen = ({ navigation }) => {
+const VerifyPhoneScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const accRegistration = useAppSelector((state) => state.accRegistration);
@@ -61,19 +63,13 @@ const VerifyScreen = ({ navigation }) => {
 
   const saveAccRegistrationToDB = () => {
 
-    axios.post('http://127.0.0.1:5000/addclientuser', {
-      name: accRegistration.name,
-      dateOfBirth: accRegistration.bday,
-      email: accRegistration.email,
-      password: accRegistration.password,
-      number: accRegistration.number
-    })
-    .then( (response) => {
-      console.log(response);
-    })
-    .catch( (error) => {
-      console.log(error);
-    })
+    saveClientUserToDB(
+      accRegistration.name,
+      accRegistration.bday,
+      accRegistration.email,
+      accRegistration.password,
+      accRegistration.number
+    );
   }
 
   const confirmVerificationCode = () => {
@@ -85,7 +81,6 @@ const VerifyScreen = ({ navigation }) => {
 
     signInWithCredential(auth, credential).then(() => {
       registeringAccount && saveAccRegistrationToDB();
-      dispatch(updateAuthStatus(true));
     }).catch((e) => {
       switch (e.code) {
         case 'auth/invalid-verification-code':
@@ -124,10 +119,10 @@ const VerifyScreen = ({ navigation }) => {
   );
 };
 
-VerifyScreen.propTypes = {
+VerifyPhoneScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
 };
 
-export default VerifyScreen;
+export default VerifyPhoneScreen;

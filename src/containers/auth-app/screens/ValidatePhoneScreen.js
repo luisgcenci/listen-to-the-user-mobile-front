@@ -73,7 +73,7 @@ const ValidatePhoneScreen = ({ navigation }) => {
   const attemptInvisibleVerification = false;
 
   const checkUserExists = () => {
-    axios.post('http://127.0.0.1:5000/checkuserexists', {
+    axios.post('http://192.168.0.134:5000/checkuserexists', {
       number: phoneNumber
     })
     .then( (response) => {
@@ -91,15 +91,14 @@ const ValidatePhoneScreen = ({ navigation }) => {
       else if (!registeringAccount && !userExists){
         setErrorMessage(
           'This number is not associated with an account. Please create an account.'
-        );      
+        );
       }
     })
-    .catch( (error) => {
-      console.log(error);
+    .catch( (e) => {
+      console.log('error: ' + e);
     })
   }
 
-  
   const sendVerificationCode = () => {
     if (isValidNumber(phoneNumber)) {
       const phoneProvider = new PhoneAuthProvider(auth);

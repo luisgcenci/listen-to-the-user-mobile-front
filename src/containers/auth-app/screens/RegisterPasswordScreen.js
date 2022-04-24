@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const RegisterBirthdayScreen = ({ navigation }) => {
+const RegisterPasswordScreen = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -66,7 +66,9 @@ const RegisterBirthdayScreen = ({ navigation }) => {
           secureTextEntry={true}
         />
         {isFieldInError('password') && getErrorsInField('password').map(Errormessage => (
-          <Text style={styles.errorMessage}>{Errormessage}</Text>
+          <Text key={Errormessage} style={styles.errorMessage}>
+            {Errormessage}
+          </Text>
         ))}
         <Text>Confirme sua senha</Text>
         <TextInput 
@@ -78,7 +80,9 @@ const RegisterBirthdayScreen = ({ navigation }) => {
           secureTextEntry={true}
         />
         {isFieldInError('confirmPassword') && getErrorsInField('confirmPassword').map(Errormessage => (
-          <Text style={styles.errorMessage}>{Errormessage}</Text>
+          <Text key={Errormessage} style={styles.errorMessage}>
+            {Errormessage}
+          </Text>
         ))}
         <Pressable style={styles.button}
           onPress={() => handleFormValidation()}
@@ -95,4 +99,4 @@ const RegisterBirthdayScreen = ({ navigation }) => {
   )
 }
 
-export default RegisterBirthdayScreen;
+export default RegisterPasswordScreen;
