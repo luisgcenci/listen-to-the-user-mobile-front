@@ -5,17 +5,19 @@ interface accRegistrationState {
   cpf: String;
   bday: String;
   email: String;
-  password: String;
+  newPassword: String;
   number: String;
+  countryCode: String;
 }
 
 const initialState: accRegistrationState = {
-  name: '',
-  cpf: '',
-  bday: '',
-  email: '',
-  password: '',
-  number: '',
+  name: 'Luis Ribeiro',
+  cpf: '079.068.329-65',
+  bday: '18/11/1996',
+  email: 'luisgcenci@gmail.com',
+  newPassword: '123456',
+  number: '5044624982',
+  countryCode: '+1'
 };
 
 const accRegistrationSlice = createSlice({
@@ -42,15 +44,20 @@ const accRegistrationSlice = createSlice({
       const payload = action.payload;
       st.email = payload;
     },
-    updatePassword(state, action: PayloadAction<String>) {
+    updateNewPassword(state, action: PayloadAction<String>) {
       const st = state;
       const payload = action.payload;
-      st.password = payload;
+      st.newPassword = payload;
     },
     updateNumber(state, action: PayloadAction<String>) {
       const st = state;
       const payload = action.payload;
       st.number = payload;
+    },
+    updateCountryCode(state, action: PayloadAction<String>) {
+      const st = state;
+      const payload = action.payload;
+      st.countryCode = payload;
     },
   },
 });
@@ -60,8 +67,9 @@ export const {
   updateCPF,
   updateBday,
   updateEmail,
-  updatePassword,
+  updateNewPassword,
   updateNumber,
+  updateCountryCode
 } = accRegistrationSlice.actions;
 
 export default accRegistrationSlice.reducer;

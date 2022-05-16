@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Text,
     View,
@@ -6,24 +6,87 @@ import {
 } from 'react-native';
 
 //text input fields
-import TextInputName from '../../../components/TextInputName'
-import TextInputCPF from '../../../components/TextInputCPF';
-import TextInputBirthday from '../../../components/TextInputBirthday';
-import TextInputPhoneNumber from '../../../components/TextInputPhoneNumber';
+import TextInputName from '@components/inputs/TextInputName'
+import TextInputCPF from '@components/inputs/TextInputCPF';
+import TextInputBirthday from '@components/inputs/TextInputBirthday';
+import TextInputPhoneNumber from '@components/inputs/TextInputPhoneNumber';
 
 //components
-import ButtonOne from '../../../components/atoms/ButtonOne';
-import Breadcrumb from '../../../components/Breadcrumb';
+import ButtonOne from '@components/atoms/ButtonOne';
+import Breadcrumb from '@components/Breadcrumb';
 
 //icons
 import personalDataIcon from '../../../../assets/icons/personaldata_icon.png'
 import GreyedOutAccessDataIcon from '../../../../assets/icons/accessdatagrayedout_icon.png'
 
+//redux
+import { useAppSelector } from '@hooks/hooks';
+
+//helpers
+import { checkIfPhoneIsRegistered, checkIfCpfIsRegistered } from '@helpers/DbHelper';
+
+const axios = require('axios');
+
 const RegisterPersonalDataScreen = ({ navigation }) => {
 
-  const handleButtonAction = () => {
-    navigation.navigate('RegisterAccessDataScreen');
+  //used for form validation
+  const [nameIsValid, setNameIsValid] = useState(false);
+  const [cpfIsValid, setCpfIsValid] = useState(false);
+  const [birthdayIsValid, setBirthdayIsValid] = useState(false);
+  const [phoneIsValid, setPhoneIsValid] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+
+  //used for database validation
+  const cpf = useAppSelector((state) => state.accRegistration.cpf);
+  const countryCode = useAppSelector((state) => state.accRegistration.countryCode);
+  const phoneNumber = useAppSelector((state) => state.accRegistration.number);
+
+  //error related to database validation
+  const [phoneErrorMessage, setPhoneErrorMessage] = useState('');
+  const [cpfErrorMessage, setCpfErrorMessage] = useState('');
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
+
+  const handleButtonAction = async () => {
+    
+    if (formIsValid){
+
+      const phoneIsRegistered = await checkIfPhoneIsRegistered(countryCode, phoneNumber);
+      const cpfIsRegistered = await checkIfCpfIsRegistered(cpf);
+      
+      phoneIsRegistered ?
+      setPhoneErrorMessage('Esse número já está registrado com uma conta.')
+      :
+      setPhoneErrorMessage('');
+
+      cpfIsRegistered ?
+      setCpfErrorMessage('Esse CPF já está registrado com uma conta.')
+      :
+      setCpfErrorMessage('');
+
+      if (!phoneIsRegistered && !cpfIsRegistered){
+        navigation.navigate('RegisterAccessDataScreen');
+      }
+
+    }else{
+      setShowFormErrors(true);
+    }
   }
+
+  useEffect(() => {
+    if (
+      nameIsValid && 
+      cpfIsValid && 
+      birthdayIsValid &&
+      phoneIsValid
+    ){
+      setFormIsValid(true);
+    }
+    else{
+      setFormIsValid(false);
+    }
+
+  },[nameIsValid, cpfIsValid, birthdayIsValid, phoneIsValid])
 
   return (
     <View style={styles.container}>
@@ -41,10 +104,24 @@ const RegisterPersonalDataScreen = ({ navigation }) => {
       </View>
       <View style={styles.inputFields}>
         <Text style={styles.title}>Queremos te Conhecer!</Text>
-        <TextInputName />
-        <TextInputCPF />
-        <TextInputBirthday />
-        <TextInputPhoneNumber />
+        <TextInputName 
+          setIsValid={setNameIsValid}
+          showFormErrors={showFormErrors}
+        />
+        <TextInputCPF 
+          setIsValid={setCpfIsValid}
+          showFormErrors={showFormErrors}
+          showRegistrationError={cpfErrorMessage}
+        />
+        <TextInputBirthday 
+          setIsValid={setBirthdayIsValid}
+          showFormErrors={showFormErrors}
+        />
+        <TextInputPhoneNumber 
+          setIsValid={setPhoneIsValid}
+          showFormErrors={showFormErrors}
+          showRegistrationError={phoneErrorMessage}
+        />
       </View>
       <View style={styles.buttonArea}>
         <ButtonOne
@@ -68,13 +145,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
   },
   breadcrumb: {
     flex: 1,
     flexDirection: 'row',
     width: '60%',
-    top: 40
+    top: 40,
   },
   buttonArea: {
     flex: 1,

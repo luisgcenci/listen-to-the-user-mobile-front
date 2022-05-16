@@ -1,48 +1,78 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   SafeAreaView,
   StyleSheet,
-  Text,
-  Pressable,
-  Image,
-  TextInput
+  Text
 } from 'react-native';
 
 //redux imports
-import { useAppDispatch } from '../../../hooks/hooks';
-import { 
-  updateRegisteringAccount,
-} from '../../../store/features/AuthAppSlice';
+import { useAppSelector } from '@hooks/hooks';
 
 //social media auth imports
-import LogInWithGoogle from '../../../components/LogInWithGoogle';
-import LogInWithApple from '../../../components/LoginWithApple';
-import LogInWithFacebook from '../../../components/LoginWithFacebook';
+import LogInWithGoogle from '@components/auth-providers/LogInWithGoogle';
+import LogInWithApple from '@components/auth-providers/LoginWithApple';
+import LogInWithFacebook from '@components/auth-providers/LoginWithFacebook';
 
-//buttons
-import ButtonOne from '../../../components/atoms/ButtonOne';
-import ButtonTwo from '../../../components/atoms/ButtonTwo';
+//components
+import ButtonOne from '@components/atoms/ButtonOne';
+import ButtonTwo from '@components/atoms/ButtonTwo';
+import Separator from '@components/atoms/Separator';
+import ErrorMessage from '@components/atoms/ErrorMessage';
 
 //input fields
-import TextInputEmail from '../../../components/TextInputEmail';
-import TextInputPassword from '../../../components/TextInputPassword';
+import TextInputEmail from '@components/inputs/TextInputEmail';
+import TextInputPassword from '@components/inputs/TextInputPassword';
 
-//other components
-import Separator from '../../../components/atoms/Separator';
+//firebase
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+
+const auth = getAuth();
 
 const WelcomeScreen = ({ navigation }) => {
   
-  const dispatch = useAppDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  //form validation
+  const [emailIsValid, setEmailIsValid] = useState(false);
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+  const [showFormErrors, setShowFormErrors] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  //redux
+  const email = useAppSelector((state) => state.accLogIn.email);
+  const password = useAppSelector((state) => state.accLogIn.password);
 
   const handleCreateAccount = () => {
-    dispatch(updateRegisteringAccount(false));
-    navigation.navigate("RegisterPersonalDataScreen");
+    navigation.navigate('RegisterPersonalDataScreen');
   }
 
+  const handleLogIn = () => {
+
+    if (formIsValid){
+
+      signInWithEmailAndPassword(auth, email, password).then((userCred) => {
+        setErrorMessage('');
+      }).catch((error) => {
+        setErrorMessage(error.message);
+      })
+    }else{
+      setShowFormErrors(true);
+    }
+  }
+
+  useEffect(() => {
+    if (
+      emailIsValid && 
+      passwordIsValid
+    ){
+      setFormIsValid(true);
+    }
+    else{
+      setFormIsValid(false);
+    }
+
+  },[emailIsValid, passwordIsValid])
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.socialAuth}>
@@ -53,27 +83,31 @@ const WelcomeScreen = ({ navigation }) => {
       <Separator />
       <View style={styles.emailAuth}>
         <View style={styles.inputView}>
-          <TextInputEmail />
+          <TextInputEmail 
+            setIsValid={setEmailIsValid}
+            showFormErrors={showFormErrors}
+          />
         </View>
         <View style={styles.inputView}>
-          <TextInputPassword />
+          <TextInputPassword 
+            setIsValid={setPasswordIsValid}
+            showFormErrors={showFormErrors}
+          />
         </View>
+        <ErrorMessage 
+          message={errorMessage}
+        />
         <Text style={styles.forgotPasswordText}>
           Esqueci a minha senha
         </Text>
         <ButtonTwo 
           text='Entrar'
+          buttonAction={handleLogIn}
         />
         <ButtonOne 
           text='Criar Conta'
           buttonAction={handleCreateAccount}
         />
-        {/* <Pressable
-          onPress={ () => dispatch(updateRegisteringAccount(false)) && navigation.navigate("ValidatePhoneScreen")}
-          style={styles.button}
-        >
-          <Text>Log in with Phone Number</Text>
-        </Pressable> */}
       </View>
     </SafeAreaView>
   );

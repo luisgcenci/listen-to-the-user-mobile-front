@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Text, SafeAreaView } from 'react-native';
-import AuthApp from '../containers/auth-app/AuthApp';
-import InternalApp from '../containers/internal-app/InternalApp';
+
+//apps imports
+import AuthApp from '@auth-app/AuthApp';
+import InternalApp from '@internal-app/InternalApp';
 
 //firebase imports
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-
 const auth = getAuth();
 
 const Apps = () => {

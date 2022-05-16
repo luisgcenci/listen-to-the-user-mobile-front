@@ -1,30 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Text,
-    View,
-    StyleSheet
+  Text,
+  View,
+  StyleSheet
 } from 'react-native';
 
 //text input fields
-import TextInputEmail from '../../../components/TextInputEmail'
-import TextInputPassword from '../../../components/TextInputPassword';
-import TextInputPasswordConfirmation from '../../../components/TextInputPasswordConfirmation';
+import TextInputNewEmail from '@components/inputs/TextInputNewEmail'
+import CreatePasswordInputs from '@components/CreatePasswordInputs';
 
 //components
-import ButtonOne from '../../../components/atoms/ButtonOne';
-import Breadcrumb from '../../../components/Breadcrumb';
+import ButtonOne from '@components/atoms/ButtonOne';
+import Breadcrumb from '@components/Breadcrumb';
 
 //icons
-import personalDataIcon from '../../../../assets/icons/personaldata_icon.png'
-import AccessDataIcon from '../../../../assets/icons/accessdata_icon.png'
+import personalDataIcon from '@assets/icons/personaldata_icon.png'
+import AccessDataIcon from '@assets/icons/accessdata_icon.png'
+
+//redux
+import { useAppSelector } from '@hooks/hooks';
+
+//helpers
+import { checkIfEmailIsRegistered } from '@helpers/DbHelper';
+
+const axios = require('axios');
 
 const RegisterAccessDataScreen = ({navigation}) => {
 
-  const handleButtonAction = () => {
-    navigation.navigate('AccountValidationScreen');
+  //form validation
+  const [emailIsValid, setEmailIsValid] = useState(false);
+  const [newPasswordIsValid, setNewPasswordIsValid] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
+  //db validation
+  const email = useAppSelector((state) => state.accRegistration.email);
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+
+  const handleButtonAction = async () => {
+    if (formIsValid){
+
+      const emailCheck = await checkIfEmailIsRegistered(email);
+
+      // if (emailCheck && emailCheck.includes('EMAIL')){
+      //   setEmailErrorMessage('Esse Email já está registrado com uma conta.');
+      // }
+      // else{
+      //   setEmailErrorMessage('');
+      //   navigation.navigate('AccountValidationScreen');
+      // }
+
+      if (emailCheck){
+        setEmailErrorMessage('Esse Email já está registrado com uma conta.');
+      }else{
+        setEmailErrorMessage('');
+        navigation.navigate('AccountValidationScreen');
+      }
+    }else{
+      setShowFormErrors(true);
+    }
   }
 
-  return (
+  useEffect(() => {
+    if (
+      emailIsValid && 
+      newPasswordIsValid
+    ){
+      setFormIsValid(true);
+    }
+    else{
+      setFormIsValid(false);
+    }
+
+  },[emailIsValid, newPasswordIsValid])
+
+return (
     <View style={styles.container}>
       <View style={styles.breadcrumb}>
         <Breadcrumb
@@ -41,15 +91,16 @@ const RegisterAccessDataScreen = ({navigation}) => {
       <View style={styles.inputFields}>
         <Text style={styles.title}>Queremos te conhecer!</Text>
         <View style={styles.inputView}>
-          <TextInputEmail />
+          <TextInputNewEmail
+            setIsValid={setEmailIsValid}
+            showFormErrors={showFormErrors}
+            showRegistrationError={emailErrorMessage}
+          />
         </View>
-        <View style={styles.inputView}>
-          <TextInputPassword />
-        </View>
-        <View style={styles.inputView}>
-          <TextInputPasswordConfirmation />
-        </View>
-        {/* <TextInputPasswordConfirmation /> */}
+        <CreatePasswordInputs 
+          showFormErrors={showFormErrors}
+          setNewPasswordIsValid={setNewPasswordIsValid}
+        />
       </View>
       <View style={styles.buttonArea}>
         <ButtonOne

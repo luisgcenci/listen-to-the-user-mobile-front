@@ -1,4 +1,22 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@enums/*": ["./src/enums/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@store/*": ["./src/store/*"],
+      "@auth-app/*": ["./src/containers/auth-app/*"],
+      "@internal-app/*": ["./src/containers/internal-app/*"],
+      "@firebase/*": ["./src/containers/firebase/*"]
+    },
+  },
   "extends": "expo/tsconfig.base"
 }
+
+
+//alias:         {'~': './src'}
+//            '~/*'' : ['./src/*']

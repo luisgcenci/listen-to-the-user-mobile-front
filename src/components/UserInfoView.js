@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
-import { useAppSelector } from '../hooks/hooks'
+import { useAppSelector } from '@hooks/hooks'
 import React from 'react'
 
 const UserInfoView = ({editData}) => {

@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Errormessage = ({ message }) => {
+const ErrorMessage = ({ message }) => {
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
+      textAlign: 'center',
       color: 'red',
     },
   });
@@ -19,9 +19,9 @@ const Errormessage = ({ message }) => {
   );
 };
 
-Errormessage.propTypes = {
+ErrorMessage.propTypes = {
 
   message: PropTypes.string.isRequired,
 };
 
-export default Errormessage;
+export default ErrorMessage;

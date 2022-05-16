@@ -13,23 +13,14 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 
 //screens
-import WelcomeScreen from './screens/WelcomeScreen';
-import RegisterPersonalDataScreen from './screens/RegisterPersonalDataScreen';
-import RegisterAccessDataScreen from './screens/RegisterAccessDataScreen'
-import AccountValidationScreen from './screens/AccountValidationScreen';
-import VerifyPhoneScreen from './screens/VerifyPhoneScreen';
+import WelcomeScreen from '@auth-app/screens/WelcomeScreen';
+import RegisterPersonalDataScreen from '@auth-app/screens/RegisterPersonalDataScreen';
+import RegisterAccessDataScreen from '@auth-app/screens/RegisterAccessDataScreen'
+import AccountValidationScreen from '@auth-app/screens/AccountValidationScreen';
+import AccountPhoneVerificationScreen from '@auth-app/screens/AccountPhoneVerificationScreen';
 
 //linking
 import * as Linking from 'expo-linking'
-
-const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'android' ? 30 : 0,
-    backgroundColor: Appearance.getColorScheme() === 'light' ? '#FFFFFF' : '#000000',
-  },
-});
 
 const AuthApp = () => {
 
@@ -121,14 +112,26 @@ const AuthApp = () => {
             }}
           />
           <Stack.Screen
-            name="VerifyPhoneScreen"
-            component={VerifyPhoneScreen}
+            name="AccountPhoneVerificationScreen"
+            component={AccountPhoneVerificationScreen}
+            options={{
+              headerTitle:'Verifique sua conta',
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
   )
 };
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
+    backgroundColor: Appearance.getColorScheme() === 'light' ? '#FFFFFF' : '#000000',
+  },
+});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

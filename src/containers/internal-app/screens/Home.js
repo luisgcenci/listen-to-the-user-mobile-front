@@ -16,32 +16,6 @@ import * as Linking from 'expo-linking'
 //firebase auth imports
 import { getAuth, signOut } from 'firebase/auth';
 
-const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  outputText: {
-    textAlign: 'center',
-    height: 40,
-  },
-  button: {
-    backgroundColor: 'lightpink',
-    marginVertical: 10,
-  },
-  barcode: {
-    height: 250,
-    width: 250
-  },
-  perfilPic: {
-    paddingTop: 50,
-    width:100,
-    height: 100
-  },
-});
-
 const HomeScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -115,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
     setBarCodeOpen(false);
     setScanned(false);
   }
-
+  
   return (
     <View style={styles.container}>
       {barCodeOpen ?
@@ -145,6 +119,9 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.buttonText}> Sign Out </Text>
       </Pressable>
+      <Text>
+        {String(auth.currentUser.emailVerified)}
+      </Text>
       {/* <Pressable
         onPress={() => navigation.navigate('FeedbackTabs')}
         style={styles.button}
@@ -154,5 +131,31 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  outputText: {
+    textAlign: 'center',
+    height: 40,
+  },
+  button: {
+    backgroundColor: 'lightpink',
+    marginVertical: 10,
+  },
+  barcode: {
+    height: 250,
+    width: 250
+  },
+  perfilPic: {
+    paddingTop: 50,
+    width:100,
+    height: 100
+  },
+});
 
 export default HomeScreen;

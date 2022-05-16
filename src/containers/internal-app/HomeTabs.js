@@ -1,9 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import Home from './screens/Home';
-import Settings from './screens/Settings';
+
+//screens imports
+import Home from '@internal-app/screens/Home';
+import Settings from '@internal-app/screens/Settings';
+
+//navigation imports
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from '../../components/atoms/Icon';
+
+//components imports
+import Icon from '@components/atoms/Icon';
 
 const HomeTabs = () => {
 

@@ -10,20 +10,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as Linking from 'expo-linking'
 
 //screen imports
-import HomeTabs from './HomeTabs';
-import FeedbackTabs from './FeedbackTabs';
-
-// import * as serviceWorker from './src/serviceWorker';
+import HomeTabs from '@internal-app/HomeTabs';
+import FeedbackTabs from '@internal-app/FeedbackTabs';
 
 const Stack = createStackNavigator();
-
-const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'android' ? 30 : 0,
-  },
-});
 
 const InternalApp = () => {
 
@@ -62,6 +52,14 @@ const InternalApp = () => {
     </SafeAreaView>
   );    
 };
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
+  },
+});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

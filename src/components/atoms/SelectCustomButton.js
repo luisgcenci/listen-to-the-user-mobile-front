@@ -1,5 +1,5 @@
-import { View, Text, Pressable, Button } from 'react-native'
-import React, {useState} from 'react'
+import { View, Text, Pressable } from 'react-native'
+import React from 'react'
 
 const SelectCustomButton = ({title, value, onEdit, active, setActive}) => {
 
