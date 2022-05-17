@@ -20,7 +20,8 @@ import personalDataIcon from '../../../../assets/icons/personaldata_icon.png'
 import GreyedOutAccessDataIcon from '../../../../assets/icons/accessdatagrayedout_icon.png'
 
 //redux
-import { useAppSelector } from '@hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@hooks/hooks';
+import { updateAuthProvidersRegistered } from '@src/store/features/accRegistrationSlice';
 
 //helpers
 import { checkIfPhoneIsRegistered, checkIfCpfIsRegistered } from '@helpers/DbHelper';
@@ -28,6 +29,8 @@ import { checkIfPhoneIsRegistered, checkIfCpfIsRegistered } from '@helpers/DbHel
 const axios = require('axios');
 
 const RegisterPersonalDataScreen = ({ navigation }) => {
+
+  const dispatch = useAppDispatch();
 
   //used for form validation
   const [nameIsValid, setNameIsValid] = useState(false);
@@ -53,19 +56,20 @@ const RegisterPersonalDataScreen = ({ navigation }) => {
 
       const phoneIsRegistered = await checkIfPhoneIsRegistered(countryCode, phoneNumber);
       const cpfIsRegistered = await checkIfCpfIsRegistered(cpf);
-      
-      phoneIsRegistered ?
-      setPhoneErrorMessage('Esse número já está registrado com uma conta.')
-      :
-      setPhoneErrorMessage('');
 
-      cpfIsRegistered ?
-      setCpfErrorMessage('Esse CPF já está registrado com uma conta.')
-      :
-      setCpfErrorMessage('');
-
-      if (!phoneIsRegistered && !cpfIsRegistered){
-        navigation.navigate('RegisterAccessDataScreen');
+      if (cpfIsRegistered){
+        setCpfErrorMessage('Esse CPF já está registrado com uma conta.');
+      }
+      else{
+        if (phoneIsRegistered && phoneIsRegistered.authProviders.includes('PHONE')) {
+          setPhoneErrorMessage('Esse Número já está registrado com uma conta.');
+        }
+        else{
+          setPhoneErrorMessage('');
+          setCpfErrorMessage('');
+          phoneIsRegistered && dispatch(updateAuthProvidersRegistered(phoneIsRegistered.authProviders))
+          navigation.navigate('RegisterAccessDataScreen');
+        }
       }
 
     }else{

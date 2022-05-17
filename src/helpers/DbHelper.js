@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-export const saveObjectUserToDB = (_userObject) => {
+export const saveObjectUserToDB = (_userObject, _authProvider) => {
 
   saveClientUserToDB(
     _userObject.name,
@@ -8,37 +8,29 @@ export const saveObjectUserToDB = (_userObject) => {
     _userObject.bday,
     _userObject.email,
     _userObject.newPassword,
-    _userObject.countryCode + _userObject.number
+    _userObject.countryCode + _userObject.number,
+    _authProvider
   );
 }
 
 export const saveClientUserToDB = (
-  name,
-  cpf,
-  dateOfBirth,
-  email,
-  password,
-  number,
-  authProvider
+  _name,
+  _cpf,
+  _bday,
+  _email,
+  _newPassword,
+  _number,
+  _authProvider
   ) => {
 
-  // const emailCheck = await checkIfEmailIsRegistered(email);
-
-  // if (emailCheck){
-
-  //   axios.post('http://127.0.0.1:5000/updateclientuser'),{
-
-  //   }
-  // }
-
   axios.post('http://127.0.0.1:5000/addclientuser', {
-    name: name,
-    cpf: cpf,
-    dateOfBirth: dateOfBirth,
-    email: email,
-    password: password,
-    number: number,
-    authProvider: authProvider
+    name: _name,
+    cpf: _cpf,
+    dateOfBirth: _bday,
+    email: _email,
+    password: _newPassword,
+    number: _number,
+    authProvider: _authProvider
   })
   .then( (response) => {
     console.log('User saved to the Database.');
@@ -48,24 +40,45 @@ export const saveClientUserToDB = (
   })
 }
 
+export const updateUserInDb = (
+  _userObject,
+  _authProvider
+  ) => {
+
+    axios.post('http://127.0.0.1:5000/updateclientuserinfo', {
+      name: _userObject.name,
+      cpf: _userObject.cpf,
+      dateOfBirth: _userObject.bday,
+      email: _userObject.email,
+      password: _userObject.newPassword,
+      number: _userObject.countryCode + _userObject.number,
+      authProvider: _authProvider
+    })
+    .then( (response) => {
+      console.log('User updated in the Database.');
+    })
+    .catch( (error) => {
+      console.log(error);
+    })
+}
+
 export const checkIfPhoneIsRegistered = async (countryCode, phoneNumber) => {
 
   return new Promise((resolve, reject) => {
-
-    let fullNumber = countryCode + phoneNumber; 
     
+    let fullNumber = countryCode + phoneNumber;
     fullNumber = fullNumber.replace(/[^0-9,+]/g, '');
-    let phoneIsRegistered = false;
 
     axios.post('http://localhost:5000/isuserphoneregistered', {
       number: fullNumber
     })
     .then( (response) => {
-  
-      phoneIsRegistered = response.data ? true : false;
+      
+      const data = response.data;
+      const phoneIsRegistered = response.data ? true : false;
       
       if (phoneIsRegistered){
-        resolve(true);
+        resolve(data);
       }
       else{
         resolve(false);
@@ -102,12 +115,12 @@ export const checkIfCpfIsRegistered = async (cpf) => {
   })
 }
 
-export const checkIfEmailIsRegistered = async (email) => {
+export const checkIfEmailIsRegistered = async (_email) => {
 
   return new Promise((resolve, reject) => {
 
     axios.post('http://localhost:5000/isuseremailregistered', {
-      email: email
+      email: _email
     })
     .then( (response) => {
       
@@ -115,14 +128,7 @@ export const checkIfEmailIsRegistered = async (email) => {
       const emailIsRegistered = data ? true : false;
       
       if (emailIsRegistered){
-
-        let providers = [];
-        data.map((user) => {
-          user.authProviders.map((provider) => {
-            providers.push(provider.provider);
-          })
-        })
-        resolve(providers);
+        resolve(data);
       }
       else{
         resolve(false);

@@ -42,6 +42,24 @@ export const validatePhone = async (_recaptchaVerifier, _countryCode, _number) =
     });
 }
 
+export const createUserWithEmail = async (_email, _password) => {
+
+    return new Promise ((resolve, reject) => {
+        createUserWithEmailAndPassword(auth, _email, _password)
+        .then(() => {
+          sendEmailVerification(auth.currentUser)
+          .then(() => {
+            resolve(true);
+          }).catch((error) => {
+            resolve({error: error})
+          })
+        }).catch((error) => {
+            resolve({error: error})
+        })
+    })
+
+}
+
 export const signUserWithCredential = async (_verificationId, _fullCodeInput) => {
 
     return new Promise ((resolve, reject) => {
@@ -52,9 +70,7 @@ export const signUserWithCredential = async (_verificationId, _fullCodeInput) =>
         );
 
         signInWithCredential(auth, phoneCredential).then(() => {
-
             resolve(true);
-      
         }).catch((e) => {
             switch (e.code) {
                 case 'auth/invalid-verification-code':

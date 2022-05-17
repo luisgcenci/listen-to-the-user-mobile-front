@@ -15,12 +15,15 @@ import ErrorMessage from '@components/atoms/ErrorMessage'
 import CustomRecaptcha from '@src/components/CustomRecaptcha'
 
 //helpers
-import { saveObjectUserToDB } from '@helpers/DbHelper'
+import { saveObjectUserToDB, updateUserInDb } from '@helpers/DbHelper'
 import { validatePhone } from '@src/helpers/FirebaseHelper'
 import { 
   signUserWithCredential,
   linkPhoneWithEmailCredential
 } from '@src/helpers/FirebaseHelper'
+
+//firebase
+import { getAuth } from 'firebase/auth'
 
 //redux
 import { useAppSelector, useAppDispatch } from '@hooks/hooks'
@@ -90,7 +93,7 @@ const AccountPhoneVerificationScreen = () => {
 
     if (verificationCodeSent.verificationId){
       setErrorMessage('');
-      dispatch(updateVerificationId(verificationId));
+      dispatch(updateVerificationId(verificationCodeSent.verificationId));
       setTimer(5);
     }
     else if (verificationCodeSent.errorMessage){
@@ -122,7 +125,29 @@ const AccountPhoneVerificationScreen = () => {
       return
     }
 
-    saveObjectUserToDB(accRegistration);
+    const auth = getAuth();
+
+    const authProvider = [
+      {
+        provider: 'EMAIL',
+        info: {
+          firebaseUid: auth.currentUser.uid
+        }
+      },
+      {
+        provider: 'PHONE',
+        info: {
+          firebaseUid: auth.currentUser.uid
+        }
+      }
+    ]
+
+    if (accRegistration.authProvidersRegistered.length > 0){
+      updateUserInDb(accRegistration, authProvider);
+    }
+    else{
+      saveObjectUserToDB(accRegistration, authProvider);
+    }
   }
 
   return (

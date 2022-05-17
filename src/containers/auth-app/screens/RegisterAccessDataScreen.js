@@ -18,14 +18,15 @@ import personalDataIcon from '@assets/icons/personaldata_icon.png'
 import AccessDataIcon from '@assets/icons/accessdata_icon.png'
 
 //redux
-import { useAppSelector } from '@hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@hooks/hooks';
+import { updateAuthProvidersRegistered } from '@src/store/features/accRegistrationSlice';
 
 //helpers
 import { checkIfEmailIsRegistered } from '@helpers/DbHelper';
 
-const axios = require('axios');
-
 const RegisterAccessDataScreen = ({navigation}) => {
+
+  const dispatch = useAppDispatch();
 
   //form validation
   const [emailIsValid, setEmailIsValid] = useState(false);
@@ -40,19 +41,17 @@ const RegisterAccessDataScreen = ({navigation}) => {
   const handleButtonAction = async () => {
     if (formIsValid){
 
-      const emailCheck = await checkIfEmailIsRegistered(email);
+      const emailIsRegistered = await checkIfEmailIsRegistered(email);
 
-      // if (emailCheck && emailCheck.includes('EMAIL')){
-      //   setEmailErrorMessage('Esse Email já está registrado com uma conta.');
-      // }
-      // else{
-      //   setEmailErrorMessage('');
-      //   navigation.navigate('AccountValidationScreen');
-      // }
-
-      if (emailCheck){
+      if (emailIsRegistered && emailIsRegistered.authProviders.includes('EMAIL')) {
         setEmailErrorMessage('Esse Email já está registrado com uma conta.');
-      }else{
+      }
+      else if (emailIsRegistered){
+        setEmailErrorMessage('');
+        dispatch(updateAuthProvidersRegistered(emailIsRegistered.authProviders));
+        navigation.navigate('AccountValidationScreen');
+      }
+      else{
         setEmailErrorMessage('');
         navigation.navigate('AccountValidationScreen');
       }

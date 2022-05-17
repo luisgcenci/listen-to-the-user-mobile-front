@@ -8,6 +8,7 @@ interface accRegistrationState {
   newPassword: String;
   number: String;
   countryCode: String;
+  authProvidersRegistered: Array<String>,
 }
 
 const initialState: accRegistrationState = {
@@ -17,7 +18,8 @@ const initialState: accRegistrationState = {
   email: 'luisgcenci@gmail.com',
   newPassword: '123456',
   number: '5044624982',
-  countryCode: '+1'
+  countryCode: '+1',
+  authProvidersRegistered: []
 };
 
 const accRegistrationSlice = createSlice({
@@ -59,6 +61,11 @@ const accRegistrationSlice = createSlice({
       const payload = action.payload;
       st.countryCode = payload;
     },
+    updateAuthProvidersRegistered(state, action: PayloadAction<Array<String>>){
+      const st = state;
+      const payload = action.payload;
+      st.authProvidersRegistered = payload;
+    }
   },
 });
 
@@ -69,7 +76,8 @@ export const {
   updateEmail,
   updateNewPassword,
   updateNumber,
-  updateCountryCode
+  updateCountryCode,
+  updateAuthProvidersRegistered
 } = accRegistrationSlice.actions;
 
 export default accRegistrationSlice.reducer;

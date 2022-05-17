@@ -9,7 +9,6 @@ import
     useRef
   } 
 from 'react'
-import { useAppSelector } from '@hooks/hooks'
 
 //components
 import UserInfoView from '@components/UserInfoView'
@@ -30,14 +29,14 @@ import {
 import {
   updateVerificationId,
 } from '@store/features/phoneAuthSlice';
-import { useAppDispatch } from '@hooks/hooks'
+import { useAppSelector, useAppDispatch } from '@hooks/hooks';
 
 // Firebase references
 const auth = getAuth();
 
 //helpers
-import { saveClientUserToDB, saveObjectUserToDB } from '@helpers/DbHelper'
-import { validatePhone } from '@src/helpers/FirebaseHelper'
+import { saveObjectUserToDB, updateUserInDb } from '@helpers/DbHelper'
+import { validatePhone, createUserWithEmail } from '@src/helpers/FirebaseHelper'
 
 const AccountValidationScreen = ({navigation}) => {
 
@@ -99,17 +98,26 @@ const AccountValidationScreen = ({navigation}) => {
     }
     else if (emailValidation){
 
-      createUserWithEmailAndPassword(auth, accRegistration.email, accRegistration.newPassword)
-      .then(() => {
-        sendEmailVerification(auth.currentUser)
-        .then(() => {
-          saveObjectUserToDB(accRegistration);
-        }).catch((error) => {
-          console.log(error);
-        })
-      }).catch((error) => {
-        console.log(error);
-      })
+      const userCreated = await createUserWithEmail(accRegistration.email, accRegistration.newPassword);
+      
+      if (userCreated.error){
+        setErrorMessage(userCreated.error)
+        return
+      }
+
+      const authProvider = {
+        provider: 'EMAIL',
+        info: {
+          firebaseUid: auth.currentUser.uid
+        }
+      }
+
+      if (accRegistration.authProvidersRegistered.length > 0){
+        updateUserInDb(accRegistration, authProvider);
+      }
+      else{
+        saveObjectUserToDB(accRegistration, authProvider);
+      }
     }
   }
   

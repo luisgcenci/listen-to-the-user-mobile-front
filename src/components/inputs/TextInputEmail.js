@@ -7,7 +7,6 @@ import TextInputCustom from '@components/inputs/TextInputCustom'
 const TextInputEmail = ( props ) => {
 
   const [email, setEmail] = useState(useAppSelector((state) => state.accRegistration.email));
-  const registeringAcc = useAppSelector((state) => state.authApp.registeringAccount);
 
   const dispatch = useAppDispatch();
 

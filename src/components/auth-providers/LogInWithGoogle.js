@@ -98,26 +98,24 @@ const LogInWithGoogle = () => {
     }
 
     const saveAccountToDB = async (googleUser) => {
-        const name = googleUser.user.name;
-        const cpf = null;
-        const email = googleUser.user.email;
-        const password = null;
         const [dateOfBirth, number] = await getMoreGoogleUserInfo(googleUser.accessToken);
-        const authProvider = {
-            provider: 'GOOGLE',
-            info: {
-                user: googleUser.user,
-                refreshToken: googleUser.refreshToken,
-                firebaseUid: auth.currentUser.uid
+        const authProvider = [
+            {
+                provider: 'GOOGLE',
+                info: {
+                    user: googleUser.user,
+                    refreshToken: googleUser.refreshToken,
+                    firebaseUid: auth.currentUser.uid
+                }
             }
-        }
+        ]
 
         saveClientUserToDB(
-            name,
-            cpf,
+            googleUser.user.name,
+            null,
             dateOfBirth,
-            email,
-            password,
+            googleUser.user.email,
+            null,
             number,
             authProvider
         );
