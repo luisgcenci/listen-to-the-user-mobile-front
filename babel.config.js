@@ -15,7 +15,7 @@ module.exports = function(api) {
           '@store': './src/store',
           '@auth-app': './src/containers/auth-app',
           '@internal-app': './src/containers/internal-app',
-          '@firebase': './src/containers/firebase',
+          '@@firebase': './src/containers/firebase',
         }
       }
     ]

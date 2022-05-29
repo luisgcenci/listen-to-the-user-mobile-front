@@ -16,7 +16,3 @@
   },
   "extends": "expo/tsconfig.base"
 }
-
-
-//alias:         {'~': './src'}
-//            '~/*'' : ['./src/*']
