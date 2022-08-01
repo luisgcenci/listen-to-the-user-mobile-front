@@ -6,11 +6,11 @@ const Icon = ({ route, focused, color, size }) => {
   let iconName;
 
   if (route.name === 'Home') {
-    iconName = focused
-      ? 'home'
-      : 'home';
+    iconName = focused ? 'home' : 'home';
   } else if (route.name === 'Settings') {
     iconName = focused ? 'settings' : 'settings';
+  } else if (route.name === 'Scanner') {
+    iconName = focused ? 'scan-outline' : 'scan-outline';
   }
 
   return (

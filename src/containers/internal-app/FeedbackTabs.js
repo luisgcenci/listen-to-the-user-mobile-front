@@ -1,30 +1,97 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Appearance } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack';
-import OrderNumber from './screens/OrderNumber';
-import Feedback from './screens/Feedback';
+import Breadcrumb2 from '@components/Breadcrumb2';
+import { Close } from '@src/components/atoms/Icons';
+import Filters from './screens/feedback/Filters';
+import Experience from './screens/feedback/Experience';
+import Details from './screens/feedback/Details';
+import End from './screens/feedback/End';
 
 import React from 'react'
 
-const FeedbackTabs = () => {
+const FeedbackTabs = ({navigation}) => {
 
 const Stack = createStackNavigator();
 
+
+  const dark = Appearance.getColorScheme() == 'dark';
+
   return (
     <Stack.Navigator
-      initialRouteName="Feedback"
+      initialRouteName="Experience"
       screenOptions={{
-      headerTitleAlign: 'center',
-      headerShown: false,
+        
+        headerMode:'screen',
+        headerTitleAlign: 'center',
+        headerShown: true,
+        headerTintColor: dark ? '#FFFFFF' : '#000000',
+        headerStyle: {
+          backgroundColor: dark ? '#000000' : '#FFFFFF',
+          shadowColor: 'transparent'
+        },
+        headerRightContainerStyle: {
+          alignItems: 'flex-end',
+          position: 'relative',
+          right: 20,
+        },
+        headerBackTitleVisible: false,
+        headerRight: () => (
+          <Pressable>
+            <Close 
+              onPress={ () => navigation.goBack()}
+              color={dark ? '#FFFFFF' : '#000000'}
+            />
+          </Pressable>
+        )
       }}
     >
       <Stack.Screen
-        name="Feedback"
-        component={Feedback}
+        name={"Experience"}
+        component={Experience}
+        options={{
+          headerTitle: () => (
+            <Breadcrumb2
+              active={1}
+            />
+          )
+        }}
       />
       <Stack.Screen
-        name="OrderNumber"
-        component={OrderNumber}
+        name="Filters"
+        component={Filters}
+        options={{
+          headerTitle: () => (
+            <Breadcrumb2
+              active={2}
+            />
+          )
+        }}
       />
+      <Stack.Screen
+        name="Details"
+        component={Details}
+        options={{
+          headerTitle: () => (
+            <Breadcrumb2
+              active={3}
+            />
+          )
+        }}
+      />
+      <Stack.Screen
+        name="End"
+        component={End}
+        options={{
+          headerTitle: () => (
+            <Breadcrumb2
+              active={3}
+            />
+          ),
+          headerLeft: null,
+        }}
+      />
+
+
     </Stack.Navigator>
   )
 }

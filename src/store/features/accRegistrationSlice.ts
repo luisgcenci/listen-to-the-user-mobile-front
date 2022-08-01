@@ -12,13 +12,21 @@ interface accRegistrationState {
 }
 
 const initialState: accRegistrationState = {
-  name: 'Luis Ribeiro',
-  cpf: '079.068.329-65',
-  bday: '18/11/1996',
-  email: 'luisgcenci@gmail.com',
-  newPassword: '123456',
-  number: '5044624982',
-  countryCode: '+1',
+  // name: 'Luis Ribeiro',
+  // cpf: '079.068.329-65',
+  // bday: '18/11/1996',
+  // email: 'luisgcenci@gmail.com',
+  // newPassword: '123456',
+  // number: '5044624982',
+  // countryCode: '+1',
+  // authProvidersRegistered: []
+  name: '',
+  cpf: '',
+  bday: '',
+  email: '',
+  newPassword: '',
+  number: '',
+  countryCode: '',
   authProvidersRegistered: []
 };
 

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
+  Appearance,
+  StatusBar
 } from 'react-native';
 
 //react navigation imports
@@ -13,11 +15,17 @@ import * as Linking from 'expo-linking'
 import HomeTabs from '@internal-app/HomeTabs';
 import FeedbackTabs from '@internal-app/FeedbackTabs';
 
-const Stack = createStackNavigator();
+//themes
+import { lightTheme, darkTheme } from '@src/enums/Themes';
+import { useAppSelector } from '@src/hooks/hooks';
 
 const InternalApp = () => {
 
+  const darkMode = useAppSelector((state) => state.user.darkMode);
+
   const prefix = Linking.createURL('/');
+  const Stack = createStackNavigator();
+  const styles = getStyles(darkMode);
 
   const linking = {
     prefixes: [prefix],
@@ -30,8 +38,12 @@ const InternalApp = () => {
   }
 
   return (
+    <>
     <SafeAreaView style={styles.container}>
-      <NavigationContainer linking={linking}>
+      <StatusBar
+        barStyle = {darkMode ? 'light-content' : 'dark-content'}
+      />
+      <NavigationContainer linking={linking} theme={darkMode ? darkTheme : lightTheme}>
         <Stack.Navigator
           initialRouteName="HomeTabs"
           screenOptions={{
@@ -50,14 +62,26 @@ const InternalApp = () => {
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
+    <SafeAreaView 
+      style={
+        {
+          backgroundColor: darkMode ? 
+          darkTheme.colors.background 
+          : 
+          lightTheme.colors.background
+        }
+      }
+    />
+    </>
   );    
 };
 
-const styles = StyleSheet.create({
+const getStyles = (darkMode) => StyleSheet.create({
 
   container: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 30 : 0,
+    backgroundColor: darkMode ? '#000000' : '#FFFFFF',
   },
 });
 
