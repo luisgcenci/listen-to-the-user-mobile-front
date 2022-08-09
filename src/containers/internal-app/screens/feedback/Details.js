@@ -25,17 +25,19 @@ const Details = ({navigation}) => {
 
     return (
         <FeedBackTemplate
-          onPress={handleOnPress}
-          buttonText='Enviar Availação'
-          screenContent={
-            <View style={styles.container}>
-                <Text style={[styles.mainTexts, {paddingVertical: 40}]}>
-                    {title}
-                </Text>
-                <Text style={styles.mainTexts}>
-                    Sua opnião é muito importante para que possamos melhorar o nosso serviço! 
-                    Deixe um comentário :) 
-                </Text>
+
+            valid={true}
+            onPress={handleOnPress}
+            buttonText='Enviar Availação'
+            screenContent={
+                <View style={styles.container}>
+                    <Text style={[styles.mainTexts, {paddingVertical: 40}]}>
+                        {title}
+                    </Text>
+                    <Text style={styles.mainTexts}>
+                        Sua opnião é muito importante para que possamos melhorar o nosso serviço! 
+                        Deixe um comentário :)  
+                    </Text>
                 <Image source={require('@assets/feedbackdetails.png')}/>
                 <Text 
                     style={[styles.subTexts, {color: '#4E5966', fontSize: 16}]}>
@@ -48,6 +50,9 @@ const Details = ({navigation}) => {
                     multiline={true}
                     value={details}
                     onChangeText={setDetails}
+                    maxLength={500}
+                    returnKeyType='done'
+                    blurOnSubmit={true}
                 />
                 <Text 
                     style={[styles.subTexts, {color: '#6B7280', fontSize: 12}]}>

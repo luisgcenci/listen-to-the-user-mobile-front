@@ -22,12 +22,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#818C99',
     borderRadius: 21
   },
+  invalidPressable:{
+    opacity: 0.2,
+  },
   ScreenContent:{
     flex: 9,
   }
 });
 
-const FeedBackTemplate = ({screenContent, onPress, buttonText}) => {
+const FeedBackTemplate = ({screenContent, onPress, buttonText, valid}) => {
 
   return (
     <View style={styles.container}>
@@ -37,7 +40,8 @@ const FeedBackTemplate = ({screenContent, onPress, buttonText}) => {
       <View style={styles.Button}>
         <Pressable 
           onPress={onPress}
-          style={styles.Pressable}
+          style={[styles.Pressable, !valid && styles.invalidPressable]}
+          disabled={!valid}
         >
           <Text style={{color:'#FFFFFF', fontSize: 16, fontWeight: '500'}}>
             {buttonText ? buttonText : 'Avançar' }

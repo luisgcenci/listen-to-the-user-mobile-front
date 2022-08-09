@@ -9,11 +9,9 @@ import {
     sendEmailVerification,
     EmailAuthProvider
 } from 'firebase/auth';
-import { getApp } from 'firebase/app';
 
 //firebase references
-const app = getApp();
-const auth = getAuth();
+import { app, auth } from '../containers/firebase/config'
 
 if (!app?.options || Platform.OS === 'web') {
     throw new Error('This example only works on Android or iOS, and requires a valid Firebase config.');

@@ -23,6 +23,7 @@ const Experience = ({ navigation }) => {
     return (
         <FeedBackTemplate
             onPress={handleOnPress}
+            valid={orderNumber.length > 0 && rating > 0}
             screenContent={
                 <View style={styles.container}>
                     <View style={styles.InputSection}>
@@ -41,6 +42,7 @@ const Experience = ({ navigation }) => {
                             style={styles.Input}
                             value={orderNumber}
                             onChangeText={setOrderNumber}
+                            maxLength={256}
                         />
                     </View>
                     <View style={styles.Stars}>

@@ -6,9 +6,8 @@ import AuthApp from '@auth-app/AuthApp';
 import InternalApp from '@internal-app/InternalApp';
 
 //firebase imports
-import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-const auth = getAuth();
+import { auth } from '@src/containers/firebase/config';
 
 const Apps = () => {
 

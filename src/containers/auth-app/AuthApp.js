@@ -3,7 +3,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Platform,
-  Appearance
+  StatusBar,
 } from 'react-native';
 
 //navigation
@@ -13,19 +13,19 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 
 //screens
-import WelcomeScreen from '@auth-app/screens/WelcomeScreen';
-import RegisterPersonalDataScreen from '@auth-app/screens/RegisterPersonalDataScreen';
-import RegisterAccessDataScreen from '@auth-app/screens/RegisterAccessDataScreen'
-import AccountValidationScreen from '@auth-app/screens/AccountValidationScreen';
-import AccountPhoneVerificationScreen from '@auth-app/screens/AccountPhoneVerificationScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+import SignInScreen from './screens/SignInScreen';
+import RegisterPersonalDataScreen from './screens/RegisterPersonalDataScreen';
+import RegisterAccessDataScreen from './screens/RegisterAccessDataScreen'
+import AccountValidationScreen from './screens/AccountValidationScreen';
+import AccountPhoneVerificationScreen from './screens/AccountPhoneVerificationScreen';
+import { lightTheme } from '@src/enums/Themes';
 
 //linking
 import * as Linking from 'expo-linking'
 
 const AuthApp = () => {
 
-  const scheme = Appearance.getColorScheme();
-  
   const Stack = createStackNavigator();
   const prefix = Linking.createURL('/');
 
@@ -33,94 +33,92 @@ const AuthApp = () => {
     prefixes: [prefix],
     config: {
       screens: {
-        WelcomeScreen: "welcome",
-        RegisterNameScreen: "name",
-        RegisterBirthdayScreen: "birthday",
-        RegisterEmailScreen: "email",
-        RegisterPasswordScreen: "password",
-        ValidatePhoneScreen: "validatephone",
-        VerifyPhoneScreen: "verifyphone"
+        SignInScreen: 'welcome',
+        RegisterNameScreen: 'name',
+        RegisterBirthdayScreen: 'birthday',
+        RegisterEmailScreen: 'email',
+        RegisterPasswordScreen: 'password',
+        ValidatePhoneScreen: 'validatephone',
+        VerifyPhoneScreen: 'verifyphone'
       }
     }
   }
 
-  const DefaultTheme = {
-    dark: false,
-    colors: {
-      primary: 'white',
-      background: 'white',
-      card: 'white',
-      text: 'white',
-      border: 'white',
-      notification: 'white',
-    },
-  }
-
-  const DarkTheme = {
-    dark: true,
-    colors: {
-      primary: 'white',
-      background: 'white',
-      card: 'white',
-      text: 'white',
-      border: 'white',
-      notification: 'white',
-    },
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <NavigationContainer linking={linking} theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack.Navigator
-          initialRouteName="WelcomeScreen"
-          screenOptions={{
-            headerTitleAlign: 'center',
-            headerShown: true,
-            headerTintColor: '#000000',
-            headerTitleStyle: {
-              fontSize: 16
-            },
-            headerBackTitleVisible: false
-          }}
-        >
-          <Stack.Screen
-            name="WelcomeScreen"
-            component={WelcomeScreen}
-            options={{
-              headerTitle: 'Boas-vindas!',
+    <>
+      <SafeAreaView style={styles.container}>
+        <StatusBar
+          barStyle = 'dark-content'
+        />
+        <NavigationContainer linking={linking} theme={lightTheme}>
+          <Stack.Navigator
+            initialRouteName='WelcomeScreen'
+            screenOptions={{
+              headerTitleAlign: 'center',
+              headerShown: true,
+              headerTintColor: '#000000',
+              headerTitleStyle: {
+                fontSize: 16,
+              },
+              headerBackTitleVisible: false,
+              headerStyle:{
+                shadowColor: 'transparent'
+              }
             }}
-          />
-          <Stack.Screen
-            name="RegisterPersonalDataScreen"
-            component={RegisterPersonalDataScreen}
-            options={{
-              headerTitle:'Cadastro',
-            }}
-          />
-          <Stack.Screen
-            name="RegisterAccessDataScreen"
-            component={RegisterAccessDataScreen}
-            options={{
-              headerTitle:'Cadastro',
-            }}
-          />
-          <Stack.Screen
-            name="AccountValidationScreen"
-            component={AccountValidationScreen}
-            options={{
-              headerTitle:'Valide sua conta',
-            }}
-          />
-          <Stack.Screen
-            name="AccountPhoneVerificationScreen"
-            component={AccountPhoneVerificationScreen}
-            options={{
-              headerTitle:'Verifique sua conta',
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+          >
+            <Stack.Screen
+              name='WelcomeScreen'
+              component={WelcomeScreen}
+              options={{
+                headerTitle: '',
+              }}
+            />
+            <Stack.Screen
+              name='SignInScreen'
+              component={SignInScreen}
+              options={{
+                headerTitle: 'Boas-vindas!',
+              }}
+            />
+            <Stack.Screen
+              name='RegisterPersonalDataScreen'
+              component={RegisterPersonalDataScreen}
+              options={{
+                headerTitle:'Cadastro',
+              }}
+            />
+            <Stack.Screen
+              name='RegisterAccessDataScreen'
+              component={RegisterAccessDataScreen}
+              options={{
+                headerTitle:'Cadastro',
+              }}
+            />
+            <Stack.Screen
+              name='AccountValidationScreen'
+              component={AccountValidationScreen}
+              options={{
+                headerTitle:'Valide sua conta',
+              }}
+            />
+            <Stack.Screen
+              name='AccountPhoneVerificationScreen'
+              component={AccountPhoneVerificationScreen}
+              options={{
+                headerTitle:'Verifique sua conta',
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+      <SafeAreaView 
+        style={
+          {
+            backgroundColor: lightTheme.colors.background
+          }
+        }
+      />
+    </>
   )
 };
 
@@ -129,8 +127,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 30 : 0,
-    backgroundColor: Appearance.getColorScheme() === 'light' ? '#FFFFFF' : '#000000',
-  },
+    backgroundColor: '#FFFFFF'
+  }
 });
 
 // If you want your app to work offline and load faster, you can change

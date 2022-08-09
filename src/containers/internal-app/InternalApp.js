@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  Appearance,
   StatusBar
 } from 'react-native';
 
@@ -41,9 +40,9 @@ const InternalApp = () => {
     <>
     <SafeAreaView style={styles.container}>
       <StatusBar
-        barStyle = {darkMode ? 'light-content' : 'dark-content'}
+        barStyle = 'dark-content'
       />
-      <NavigationContainer linking={linking} theme={darkMode ? darkTheme : lightTheme}>
+      <NavigationContainer linking={linking} theme={lightTheme}>
         <Stack.Navigator
           initialRouteName="HomeTabs"
           screenOptions={{
@@ -65,10 +64,7 @@ const InternalApp = () => {
     <SafeAreaView 
       style={
         {
-          backgroundColor: darkMode ? 
-          darkTheme.colors.background 
-          : 
-          lightTheme.colors.background
+          backgroundColor: lightTheme.colors.background
         }
       }
     />
@@ -76,12 +72,12 @@ const InternalApp = () => {
   );    
 };
 
-const getStyles = (darkMode) => StyleSheet.create({
+const getStyles = () => StyleSheet.create({
 
   container: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 30 : 0,
-    backgroundColor: darkMode ? '#000000' : '#FFFFFF',
+    backgroundColor: '#FFFFFF'
   },
 });
 

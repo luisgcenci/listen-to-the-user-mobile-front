@@ -5,6 +5,8 @@ import {
     StyleSheet
 } from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 //text input fields
 import TextInputName from '@components/inputs/TextInputName'
 import TextInputCPF from '@components/inputs/TextInputCPF';
@@ -21,7 +23,6 @@ import GreyedOutAccessDataIcon from '../../../../assets/icons/accessdatagrayedou
 
 //redux
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
-import { updateAuthProvidersRegistered } from '@src/store/features/accRegistrationSlice';
 
 //helpers
 import { checkIfPhoneIsRegistered, checkIfCpfIsRegistered } from '@helpers/DbHelper';
@@ -56,22 +57,18 @@ const RegisterPersonalDataScreen = ({ navigation }) => {
 
       const phoneIsRegistered = await checkIfPhoneIsRegistered(countryCode, phoneNumber);
       const cpfIsRegistered = await checkIfCpfIsRegistered(cpf);
-
+      
       if (cpfIsRegistered){
         setCpfErrorMessage('Esse CPF já está registrado com uma conta.');
       }
-      else{
-        if (phoneIsRegistered && phoneIsRegistered.authProviders.includes('PHONE')) {
-          setPhoneErrorMessage('Esse Número já está registrado com uma conta.');
-        }
-        else{
-          setPhoneErrorMessage('');
-          setCpfErrorMessage('');
-          phoneIsRegistered && dispatch(updateAuthProvidersRegistered(phoneIsRegistered.authProviders))
-          navigation.navigate('RegisterAccessDataScreen');
-        }
+      else if (phoneIsRegistered){
+        setPhoneErrorMessage('Esse Número já está registrado com uma conta.');
+      }else{
+        setShowFormErrors(false);
+        setPhoneErrorMessage('');
+        setCpfErrorMessage('');
+        navigation.navigate('RegisterAccessDataScreen');
       }
-
     }else{
       setShowFormErrors(true);
     }
@@ -93,47 +90,52 @@ const RegisterPersonalDataScreen = ({ navigation }) => {
   },[nameIsValid, cpfIsValid, birthdayIsValid, phoneIsValid])
 
   return (
-    <View style={styles.container}>
-      <View style={styles.breadcrumb}>
-        <Breadcrumb
-          text='Dados Pessoais'
-          icon={personalDataIcon}
-          greyout={false}
-        />
-        <Breadcrumb
-          text='Dados de Acesso'
-          icon={GreyedOutAccessDataIcon}
-          greyout={true}
-        />
+    <KeyboardAwareScrollView
+      contentContainerStyle={{flex: 1}}
+      keyboardOpeningTime={0}
+    >
+      <View style={styles.container}>
+        <View style={styles.breadcrumb}>
+          <Breadcrumb
+            text='Dados Pessoais'
+            icon={personalDataIcon}
+            greyout={false}
+          />
+          <Breadcrumb
+            text='Dados de Acesso'
+            icon={GreyedOutAccessDataIcon}
+            greyout={true}
+          />
+        </View>
+        <View style={styles.inputFields}>
+          <Text style={styles.title}>Queremos te Conhecer!</Text>
+          <TextInputName 
+            setIsValid={setNameIsValid}
+            showFormErrors={showFormErrors}
+          />
+          <TextInputCPF 
+            setIsValid={setCpfIsValid}
+            showFormErrors={showFormErrors}
+            showRegistrationError={cpfErrorMessage}
+          />
+          <TextInputBirthday 
+            setIsValid={setBirthdayIsValid}
+            showFormErrors={showFormErrors}
+          />
+          <TextInputPhoneNumber 
+            setIsValid={setPhoneIsValid}
+            showFormErrors={showFormErrors}
+            showRegistrationError={phoneErrorMessage}
+          />
+        </View>
+        <View style={styles.buttonArea}>
+          <ButtonOne
+            buttonAction={handleButtonAction}
+            text='Continuar'
+          />
+        </View>
       </View>
-      <View style={styles.inputFields}>
-        <Text style={styles.title}>Queremos te Conhecer!</Text>
-        <TextInputName 
-          setIsValid={setNameIsValid}
-          showFormErrors={showFormErrors}
-        />
-        <TextInputCPF 
-          setIsValid={setCpfIsValid}
-          showFormErrors={showFormErrors}
-          showRegistrationError={cpfErrorMessage}
-        />
-        <TextInputBirthday 
-          setIsValid={setBirthdayIsValid}
-          showFormErrors={showFormErrors}
-        />
-        <TextInputPhoneNumber 
-          setIsValid={setPhoneIsValid}
-          showFormErrors={showFormErrors}
-          showRegistrationError={phoneErrorMessage}
-        />
-      </View>
-      <View style={styles.buttonArea}>
-        <ButtonOne
-          buttonAction={handleButtonAction}
-          text='Continuar'
-        />
-      </View>
-    </View>
+    </KeyboardAwareScrollView>
   )
 }
 

@@ -35,7 +35,7 @@ import { useAppSelector, useAppDispatch } from '@hooks/hooks';
 const auth = getAuth();
 
 //helpers
-import { saveObjectUserToDB, updateUserInDb } from '@helpers/DbHelper'
+import { saveObjectUserToDB } from '@helpers/DbHelper'
 import { validatePhone, createUserWithEmail } from '@src/helpers/FirebaseHelper'
 
 const AccountValidationScreen = ({navigation}) => {
@@ -52,7 +52,6 @@ const AccountValidationScreen = ({navigation}) => {
 
   //phone auth
   const recaptchaVerifier = useRef(null);
-
 
   //email auth
   const handleDataEditing = () => {
@@ -105,19 +104,7 @@ const AccountValidationScreen = ({navigation}) => {
         return
       }
 
-      const authProvider = {
-        provider: 'EMAIL',
-        info: {
-          firebaseUid: auth.currentUser.uid
-        }
-      }
-
-      if (accRegistration.authProvidersRegistered.length > 0){
-        updateUserInDb(accRegistration, authProvider);
-      }
-      else{
-        saveObjectUserToDB(accRegistration, authProvider);
-      }
+      saveObjectUserToDB(accRegistration);
     }
   }
   

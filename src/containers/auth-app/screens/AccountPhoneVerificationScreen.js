@@ -6,6 +6,8 @@ import {
 } from 'react-native'
 import React, {useEffect, useState, useRef} from 'react'
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 //components
 import ButtonThree from '@components/atoms/ButtonThree'
 import ButtonOne from '@components/atoms/ButtonOne'
@@ -15,15 +17,12 @@ import ErrorMessage from '@components/atoms/ErrorMessage'
 import CustomRecaptcha from '@src/components/CustomRecaptcha'
 
 //helpers
-import { saveObjectUserToDB, updateUserInDb } from '@helpers/DbHelper'
+import { saveObjectUserToDB } from '@helpers/DbHelper'
 import { validatePhone } from '@src/helpers/FirebaseHelper'
 import { 
   signUserWithCredential,
   linkPhoneWithEmailCredential
 } from '@src/helpers/FirebaseHelper'
-
-//firebase
-import { getAuth } from 'firebase/auth'
 
 //redux
 import { useAppSelector, useAppDispatch } from '@hooks/hooks'
@@ -75,7 +74,9 @@ const AccountPhoneVerificationScreen = () => {
       codeInputOne + codeInputTwo + 
       codeInputThree + codeInputFour +
       codeInputFive + codeInputSix  
-    );
+    )
+
+    return () => {setFullCodeInput()}
   }, [codeInputOne, codeInputTwo, codeInputThree, codeInputFour, codeInputFive, codeInputSix]);
 
   const handleInputChange = (text, nextInput) => {
@@ -121,148 +122,131 @@ const AccountPhoneVerificationScreen = () => {
     const credentialsLinked = await linkPhoneWithEmailCredential(accRegistration.email, accRegistration.newPassword);
 
     if (credentialsLinked.error){
-      setErrorMessage(credentialsLinked.error);
+      console.log(credentialsLinked.error);
       return
     }
 
-    const auth = getAuth();
-
-    const authProvider = [
-      {
-        provider: 'EMAIL',
-        info: {
-          firebaseUid: auth.currentUser.uid
-        }
-      },
-      {
-        provider: 'PHONE',
-        info: {
-          firebaseUid: auth.currentUser.uid
-        }
-      }
-    ]
-
-    if (accRegistration.authProvidersRegistered.length > 0){
-      updateUserInDb(accRegistration, authProvider);
-    }
-    else{
-      saveObjectUserToDB(accRegistration, authProvider);
-    }
+    saveObjectUserToDB(accRegistration);
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.intro}>
-        <Text style={styles.boldText}>Enviamos o código de validação</Text>
-        <Text style={styles.boldText}>para seu {accRegistration.countryCode + accRegistration.number}</Text>
-      </View>
-      <View style={styles.code}>
-        <View style={styles.retrieveCode}>
-          <Text style={styles.retrieveCodeTitle}>Não recebeu o código?</Text>
-          <ButtonThree
-            buttonAction={handleResendCodeVerification}
-            text='Reenviar código'
+    <KeyboardAwareScrollView
+      contentContainerStyle={{flex: 1}}
+      keyboardOpeningTime={0}
+    >
+      <View style={styles.container}>
+        <View style={styles.intro}>
+          <Text style={styles.boldText}>Enviamos o código de validação</Text>
+          <Text style={styles.boldText}>para seu {accRegistration.countryCode + accRegistration.number}</Text>
+        </View>
+        <View style={styles.code}>
+          <View style={styles.retrieveCode}>
+            <Text style={styles.retrieveCodeTitle}>Não recebeu o código?</Text>
+            <ButtonThree
+              buttonAction={handleResendCodeVerification}
+              text='Reenviar código'
+            />
+          </View>
+          <View style={styles.codeTitle}>
+            <Text style={styles.boldText}>Por favor, informe abaixo o código</Text>
+            <Text style={styles.boldText}>enviado para validação</Text>
+          </View>
+          <View style={styles.codeTimer}>
+            <Text style={styles.timerTitle}>O código expira em:</Text>
+            <Text style={styles.timerValue}>
+              {parseInt(timer / 60) + ':'}
+              {timer % 60 < 10 && timer % 60 > 0 ? '0' + timer % 60: timer % 60}
+              {timer % 60 === 0? '0' : ''}
+            </Text>
+          </View>
+          <View style={styles.codeInputView}>
+            <TextInput
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputOne(text);
+                  handleInputChange(text, refCodeInputTwo);
+                }
+              }
+              keyboardType='phone-pad'
+            />
+            <TextInput
+              ref={refCodeInputTwo}
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputTwo(text);
+                  handleInputChange(text, refCodeInputThree);
+                }
+              }
+              keyboardType='phone-pad'
+            />
+            <TextInput
+              ref={refCodeInputThree}
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputThree(text);
+                  handleInputChange(text, refCodeInputFour);
+                }
+              }
+              keyboardType='phone-pad'
+            />
+            <TextInput
+              ref={refCodeInputFour}
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputFour(text);
+                  handleInputChange(text, refCodeInputFive);
+                }
+              }
+              keyboardType='phone-pad'
+            />
+            <TextInput
+              ref={refCodeInputFive}
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputFive(text);
+                  handleInputChange(text, refCodeInputSix);
+                }
+              }
+              keyboardType='phone-pad'
+            />
+            <TextInput
+              ref={refCodeInputSix}
+              style={styles.codeInput}
+              maxLength={1}
+              onChangeText={
+                (text) => {
+                  setCodeInputSix(text);
+                  text.length > 0 && refCodeInputSix.current.blur();
+                }
+              }
+              keyboardType='phone-pad'
+            />
+          </View>
+          <ErrorMessage
+            message={errorMessage}
           />
         </View>
-        <View style={styles.codeTitle}>
-          <Text style={styles.boldText}>Por favor, informe abaixo o código</Text>
-          <Text style={styles.boldText}>enviado para validação</Text>
-        </View>
-        <View style={styles.codeTimer}>
-          <Text style={styles.timerTitle}>O código expira em:</Text>
-          <Text style={styles.timerValue}>
-            {parseInt(timer / 60) + ':'}
-            {timer % 60 < 10 && timer % 60 > 0 ? '0' + timer % 60: timer % 60}
-            {timer % 60 === 0? '0' : ''}
-          </Text>
-        </View>
-        <View style={styles.codeInputView}>
-          <TextInput
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputOne(text);
-                handleInputChange(text, refCodeInputTwo);
-              }
-            }
-            keyboardType='phone-pad'
-          />
-          <TextInput
-            ref={refCodeInputTwo}
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputTwo(text);
-                handleInputChange(text, refCodeInputThree);
-              }
-            }
-            keyboardType='phone-pad'
-          />
-          <TextInput
-            ref={refCodeInputThree}
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputThree(text);
-                handleInputChange(text, refCodeInputFour);
-              }
-            }
-            keyboardType='phone-pad'
-          />
-          <TextInput
-            ref={refCodeInputFour}
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputFour(text);
-                handleInputChange(text, refCodeInputFive);
-              }
-            }
-            keyboardType='phone-pad'
-          />
-          <TextInput
-            ref={refCodeInputFive}
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputFive(text);
-                handleInputChange(text, refCodeInputSix);
-              }
-            }
-            keyboardType='phone-pad'
-          />
-          <TextInput
-            ref={refCodeInputSix}
-            style={styles.codeInput}
-            maxLength={1}
-            onChangeText={
-              (text) => {
-                setCodeInputSix(text);
-                text.length > 0 && refCodeInputSix.current.blur();
-              }
-            }
-            keyboardType='phone-pad'
+        <View style={styles.nextButton}>
+          <ButtonOne
+            buttonAction={handleCodeVerification}
+            text='Registrar Conta'
           />
         </View>
-        <ErrorMessage
-          message={errorMessage}
+        <CustomRecaptcha 
+          recaptchaVerifierReference={recaptchaVerifier}
         />
       </View>
-      <View style={styles.nextButton}>
-        <ButtonOne
-          buttonAction={handleCodeVerification}
-          text='Registrar Conta'
-        />
-      </View>
-      <CustomRecaptcha 
-        recaptchaVerifierReference={recaptchaVerifier}
-      />
-    </View>
+    </KeyboardAwareScrollView>
   )
 }
 

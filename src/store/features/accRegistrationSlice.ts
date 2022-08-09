@@ -27,7 +27,6 @@ const initialState: accRegistrationState = {
   newPassword: '',
   number: '',
   countryCode: '',
-  authProvidersRegistered: []
 };
 
 const accRegistrationSlice = createSlice({
@@ -68,11 +67,6 @@ const accRegistrationSlice = createSlice({
       const st = state;
       const payload = action.payload;
       st.countryCode = payload;
-    },
-    updateAuthProvidersRegistered(state, action: PayloadAction<Array<String>>){
-      const st = state;
-      const payload = action.payload;
-      st.authProvidersRegistered = payload;
     }
   },
 });
@@ -85,7 +79,6 @@ export const {
   updateNewPassword,
   updateNumber,
   updateCountryCode,
-  updateAuthProvidersRegistered
 } = accRegistrationSlice.actions;
 
 export default accRegistrationSlice.reducer;

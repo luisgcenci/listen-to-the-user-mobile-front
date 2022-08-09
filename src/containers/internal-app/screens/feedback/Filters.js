@@ -12,9 +12,9 @@ import {
 const Filters = ({ navigation }) => {
 
   const dispatch = useAppDispatch();
-  const [questionOne, setQuestionOne] = useState(false);
-  const [questionTwo, setQuestionTwo] = useState(true);
-  const [questionThree, setQuestionThree] = useState(false);
+  const [questionOne, setQuestionOne] = useState(null);
+  const [questionTwo, setQuestionTwo] = useState(null);
+  const [questionThree, setQuestionThree] = useState(null);
 
   const handleOnPress = () => {
     dispatch(updateProblem(questionOne));
@@ -25,19 +25,32 @@ const Filters = ({ navigation }) => {
 
   const handleQuestionOne = (_status) => {
     setQuestionOne(_status);
-    setQuestionTwo(true); //set it back to default
+    if (!_status){
+      setQuestionTwo(null);
+      setQuestionThree(null);
+    }
   }
 
   const handleQuestionTwo = (_status) => {
     setQuestionTwo(_status);
+    if(_status){
+      setQuestionThree(null);
+    }
   }
 
   const handleQuestionThree = (_status) => {
     setQuestionThree(_status);
   }
 
+  console.log(questionOne, questionTwo, questionThree);
+
   return (
     <FeedBackTemplate
+      valid={
+        questionOne === false || 
+        questionOne && questionTwo ||
+        questionOne && questionTwo === false && questionThree !== null
+      }
       onPress={handleOnPress}
       screenContent={
         <View style={styles.container}>
@@ -53,7 +66,7 @@ const Filters = ({ navigation }) => {
             :
             null
           }
-          {!questionTwo ?
+          {questionOne && questionTwo === false ?
             <BinaryQuestion 
               question='Deseja ser contatado?'
               onChange={handleQuestionThree}

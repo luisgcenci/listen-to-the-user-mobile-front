@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 //text input fields
 import TextInputNewEmail from '@components/inputs/TextInputNewEmail'
@@ -19,7 +21,6 @@ import AccessDataIcon from '@assets/icons/accessdata_icon.png'
 
 //redux
 import { useAppDispatch, useAppSelector } from '@hooks/hooks';
-import { updateAuthProvidersRegistered } from '@src/store/features/accRegistrationSlice';
 
 //helpers
 import { checkIfEmailIsRegistered } from '@helpers/DbHelper';
@@ -43,12 +44,11 @@ const RegisterAccessDataScreen = ({navigation}) => {
 
       const emailIsRegistered = await checkIfEmailIsRegistered(email);
 
-      if (emailIsRegistered && emailIsRegistered.authProviders.includes('EMAIL')) {
+      if (emailIsRegistered) {
         setEmailErrorMessage('Esse Email já está registrado com uma conta.');
       }
       else if (emailIsRegistered){
         setEmailErrorMessage('');
-        dispatch(updateAuthProvidersRegistered(emailIsRegistered.authProviders));
         navigation.navigate('AccountValidationScreen');
       }
       else{
@@ -73,41 +73,46 @@ const RegisterAccessDataScreen = ({navigation}) => {
 
   },[emailIsValid, newPasswordIsValid])
 
-return (
-    <View style={styles.container}>
-      <View style={styles.breadcrumb}>
-        <Breadcrumb
-          text='Dados Pessoais'
-          icon={personalDataIcon}
-          greyout={false}
-        />
-        <Breadcrumb
-          text='Dados de Acesso'
-          icon={AccessDataIcon}
-          greyout={false}
-        />
-      </View>
-      <View style={styles.inputFields}>
-        <Text style={styles.title}>Queremos te conhecer!</Text>
-        <View style={styles.inputView}>
-          <TextInputNewEmail
-            setIsValid={setEmailIsValid}
-            showFormErrors={showFormErrors}
-            showRegistrationError={emailErrorMessage}
+  return (
+    <KeyboardAwareScrollView
+      contentContainerStyle={{flex: 1}}
+      keyboardOpeningTime={0}
+    >
+      <View style={styles.container}>
+        <View style={styles.breadcrumb}>
+          <Breadcrumb
+            text='Dados Pessoais'
+            icon={personalDataIcon}
+            greyout={false}
+          />
+          <Breadcrumb
+            text='Dados de Acesso'
+            icon={AccessDataIcon}
+            greyout={false}
           />
         </View>
-        <CreatePasswordInputs 
-          showFormErrors={showFormErrors}
-          setNewPasswordIsValid={setNewPasswordIsValid}
-        />
+        <View style={styles.inputFields}>
+          <Text style={styles.title}>Queremos te conhecer!</Text>
+          <View style={styles.inputView}>
+            <TextInputNewEmail
+              setIsValid={setEmailIsValid}
+              showFormErrors={showFormErrors}
+              showRegistrationError={emailErrorMessage}
+            />
+          </View>
+          <CreatePasswordInputs 
+            showFormErrors={showFormErrors}
+            setNewPasswordIsValid={setNewPasswordIsValid}
+          />
+        </View>
+        <View style={styles.buttonArea}>
+          <ButtonOne
+            text='Continuar'
+            buttonAction={handleButtonAction}
+          />
+        </View>
       </View>
-      <View style={styles.buttonArea}>
-        <ButtonOne
-          text='Continuar'
-          buttonAction={handleButtonAction}
-        />
-      </View>
-    </View>
+    </KeyboardAwareScrollView>
   )
 }
 

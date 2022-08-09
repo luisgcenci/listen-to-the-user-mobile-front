@@ -14,7 +14,7 @@ const FeedbackTabs = ({navigation}) => {
 const Stack = createStackNavigator();
 
 
-  const dark = Appearance.getColorScheme() == 'dark';
+  // const dark = Appearance.getColorScheme() == 'dark';
 
   return (
     <Stack.Navigator
@@ -24,9 +24,11 @@ const Stack = createStackNavigator();
         headerMode:'screen',
         headerTitleAlign: 'center',
         headerShown: true,
-        headerTintColor: dark ? '#FFFFFF' : '#000000',
+        // headerTintColor: dark ? '#FFFFFF' : '#000000',
+        headerTintColor: '#000000',
         headerStyle: {
-          backgroundColor: dark ? '#000000' : '#FFFFFF',
+          // backgroundColor: dark ? '#000000' : '#FFFFFF',
+          backgroundColor: '#FFFFFF',
           shadowColor: 'transparent'
         },
         headerRightContainerStyle: {
@@ -39,7 +41,8 @@ const Stack = createStackNavigator();
           <Pressable>
             <Close 
               onPress={ () => navigation.goBack()}
-              color={dark ? '#FFFFFF' : '#000000'}
+              // color={dark ? '#FFFFFF' : '#000000'}
+              color='#000000'
             />
           </Pressable>
         )

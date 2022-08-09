@@ -39,12 +39,13 @@ const TextInputName = ({ setIsValid, showFormErrors }) => {
     onChangeText: setName,
     handleValidation: handleFormValidation,
     autoCapitalize: 'words',
+    keyboardType: 'default',
     textContentType: 'name',
     maxLength: 265,
     errorField: 'name',
     isFieldInError: isFieldInError('name'),
     getErrorsInField: getErrorsInField,
-    showFormErrors: showFormErrors
+    showFormErrors: showFormErrors,
   }
 
   useEffect(() => {

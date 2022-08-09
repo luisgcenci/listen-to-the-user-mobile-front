@@ -1,6 +1,8 @@
-const axios = require('axios');
+import axios from 'axios'
 
-export const saveObjectUserToDB = (_userObject, _authProvider) => {
+axios.defaults.baseURL = 'http://192.168.0.66:5000/'
+
+export const saveObjectUserToDB = (_userObject) => {
 
   saveClientUserToDB(
     _userObject.name,
@@ -9,7 +11,6 @@ export const saveObjectUserToDB = (_userObject, _authProvider) => {
     _userObject.email,
     _userObject.newPassword,
     _userObject.countryCode + _userObject.number,
-    _authProvider
   );
 }
 
@@ -20,17 +21,14 @@ export const saveClientUserToDB = (
   _email,
   _newPassword,
   _number,
-  _authProvider
   ) => {
-
-  axios.post('http://127.0.0.1:5000/addclientuser', {
+  axios.post('addclientuser', {
     name: _name,
     cpf: _cpf,
     dateOfBirth: _bday,
     email: _email,
     password: _newPassword,
     number: _number,
-    authProvider: _authProvider
   })
   .then( (response) => {
     console.log('User saved to the Database.');
@@ -41,18 +39,16 @@ export const saveClientUserToDB = (
 }
 
 export const updateUserInDb = (
-  _userObject,
-  _authProvider
+  _userObject
   ) => {
 
-    axios.post('http://127.0.0.1:5000/updateclientuserinfo', {
+    axios.post('updateclientuserinfo', {
       name: _userObject.name,
       cpf: _userObject.cpf,
       dateOfBirth: _userObject.bday,
       email: _userObject.email,
       password: _userObject.newPassword,
       number: _userObject.countryCode + _userObject.number,
-      authProvider: _authProvider
     })
     .then( (response) => {
       console.log('User updated in the Database.');
@@ -69,14 +65,13 @@ export const checkIfPhoneIsRegistered = async (countryCode, phoneNumber) => {
     let fullNumber = countryCode + phoneNumber;
     fullNumber = fullNumber.replace(/[^0-9,+]/g, '');
 
-    axios.post('http://localhost:5000/isuserphoneregistered', {
+    axios.post('isuserphoneregistered', {
       number: fullNumber
     })
     .then( (response) => {
-      
       const data = response.data;
       const phoneIsRegistered = response.data ? true : false;
-      
+            
       if (phoneIsRegistered){
         resolve(data);
       }
@@ -85,6 +80,7 @@ export const checkIfPhoneIsRegistered = async (countryCode, phoneNumber) => {
       }
     })
     .catch( (e) => {
+      console.log(e);
       reject(e);
     })
   })
@@ -95,7 +91,7 @@ export const checkIfCpfIsRegistered = async (cpf) => {
   return new Promise((resolve, reject) => {
     let cpfIsRegistered = false;
 
-    axios.post('http://localhost:5000/isusercpfregistered', {
+    axios.post('isusercpfregistered', {
       cpf: cpf
     })
     .then( (response) => {
@@ -110,6 +106,7 @@ export const checkIfCpfIsRegistered = async (cpf) => {
       }
     })
     .catch( (e) => {
+      console.log(e);
       reject(e);
     })
   })
@@ -119,7 +116,7 @@ export const checkIfEmailIsRegistered = async (_email) => {
 
   return new Promise((resolve, reject) => {
 
-    axios.post('http://localhost:5000/isuseremailregistered', {
+    axios.post('isuseremailregistered', {
       email: _email
     })
     .then( (response) => {

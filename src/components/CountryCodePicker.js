@@ -19,7 +19,8 @@ const CountryCodePicker = (props) => {
                 setOpen={setOpen}
                 setValue={props.setVaule}
                 setItems={setItems}
-                dropDownDirection="TOP"
+                dropDownDirection='TOP'
+                listMode='SCROLLVIEW'
             />
         </View>
     )

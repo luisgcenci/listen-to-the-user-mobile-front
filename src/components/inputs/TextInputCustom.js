@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView } from 'react-native';
 
 const TextInputCustom = (props) => {
 
@@ -16,7 +16,9 @@ const TextInputCustom = (props) => {
     },[props.value])
 
     return (
-        <View style={styles.inputView}>
+        <View 
+            style={styles.inputView}
+        >
             <Text style={styles.inputLabel}>{props.label}</Text>
             <TextInput
                 style={styles.input}
@@ -31,6 +33,7 @@ const TextInputCustom = (props) => {
                 autoCapitalize={props.autoCapitalize}
                 keyboardType={props.keyboardType}
                 maxLength={props.maxLength}
+                returnKeyType='done'
             />
             {
                 props.showFormErrors &&
@@ -49,7 +52,6 @@ const TextInputCustom = (props) => {
                 null
             }
         </View>
-        
     );
 };
 
